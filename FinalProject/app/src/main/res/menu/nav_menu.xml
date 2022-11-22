@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <item
+        android:id="@+id/nav_map"
+        android:icon="@drawable/ic_baseline_map_24"
+        android:title="Mapa"/>
+
+    <item
+        android:id="@+id/nav_adress"
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="Minhas Moradas"/>
+
+    <item
+        android:id="@+id/nav_occurrence"
+        android:icon="@drawable/ic_baseline_info_24"
+        android:title="Ocurrências Recentes"/>
+
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="Definições"/>
+
+</menu>
