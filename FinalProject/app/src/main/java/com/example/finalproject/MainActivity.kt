@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         txtInfo = findViewById(R.id.txt_risk)
         floatingButton.setOnClickListener {
             //Colocar popup para adicionar ocurrencia
-            Toast.makeText(this,"Adicionar Ocurrência",Toast.LENGTH_LONG).show()
+            startActivity(Intent(this,AddProblem::class.java))
         }
     }
 
