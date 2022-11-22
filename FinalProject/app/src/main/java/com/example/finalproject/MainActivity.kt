@@ -5,7 +5,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -19,12 +21,16 @@ import com.google.android.material.navigation.NavigationView
 class MainActivity : AppCompatActivity() {
 
     lateinit var toggle: ActionBarDrawerToggle
+    lateinit var toolbar: androidx.appcompat.widget.Toolbar
     lateinit var mapFragment : SupportMapFragment
     lateinit var googleMap : GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        toolbar=findViewById(R.id.myToolBar)
+        setSupportActionBar(toolbar)
 
         val drawerLayout : DrawerLayout = findViewById(R.id.drawerLayout)
         val navView : NavigationView = findViewById(R.id.nav_view)
@@ -42,10 +48,21 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
+        //Inicializar o mapa
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(OnMapReadyCallback {
             googleMap = it
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.general_menu,menu)
+
+        val search : MenuItem? = menu?.findItem(R.id.pesquisa)
+        val searchView = search?.actionView as SearchView
+        searchView.queryHint = "Search"
+
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
