@@ -23,9 +23,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <include layout="@layout/toolbar"/>
-
+        <include layout="@layout/toolbarwithbutton"/>
     </RelativeLayout>
     
     <com.google.android.material.navigation.NavigationView
