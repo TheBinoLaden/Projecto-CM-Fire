@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var mapFragment : SupportMapFragment
     lateinit var googleMap : GoogleMap
     lateinit var floatingButton : FloatingActionButton
+    lateinit var txtInfo : TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +59,8 @@ class MainActivity : AppCompatActivity() {
             googleMap = it
         })
 
-        floatingButton=findViewById(R.id.btn_addProblem)
+        floatingButton = findViewById(R.id.btn_addProblem)
+        txtInfo = findViewById(R.id.txt_risk)
         floatingButton.setOnClickListener {
             //Colocar popup para adicionar ocurrencia
             Toast.makeText(this,"Adicionar Ocurrência",Toast.LENGTH_LONG).show()

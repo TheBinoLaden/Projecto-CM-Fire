@@ -26,4 +26,16 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
 
+    <TextView
+        android:id="@+id/txt_risk"
+        android:text="Risco: Baixo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:layout_margin="32dp"
+        android:textAlignment="center"
+        android:background="@color/white"
+        android:textSize="25dp"
+        android:layout_alignParentBottom="true"/>
+
 </RelativeLayout>
