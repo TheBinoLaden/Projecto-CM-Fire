@@ -1,19 +1,13 @@
 package com.example.finalproject
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.SearchView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -48,7 +42,8 @@ class MainActivity : AppCompatActivity() {
 
         navView.setNavigationItemSelectedListener {
             when(it.itemId){
-                R.id.nav_adress -> startActivity(Intent(this,MineAdresses::class.java))
+                R.id.nav_adress -> startActivity(Intent(this,AdressActivity::class.java))
+                R.id.nav_settings -> startActivity(Intent(this,SettingsActivity::class.java))
             }
             true
         }
@@ -63,12 +58,12 @@ class MainActivity : AppCompatActivity() {
         txtInfo = findViewById(R.id.txt_risk)
         floatingButton.setOnClickListener {
             //Colocar popup para adicionar ocurrencia
-            startActivity(Intent(this,AddProblem::class.java))
+            startActivity(Intent(this,OccurrenceActivity::class.java))
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.general_menu,menu)
+        menuInflater.inflate(R.menu.toolbar_menu,menu)
 
         val search : MenuItem? = menu?.findItem(R.id.pesquisa)
         val searchView = search?.actionView as SearchView

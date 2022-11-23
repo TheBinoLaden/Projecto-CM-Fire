@@ -7,20 +7,26 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 
-class AddProblem : AppCompatActivity() {
+class OccurrenceActivity : AppCompatActivity() {
 
     lateinit var toolbarInfo : Toolbar
     lateinit var submitButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_problem)
+        setContentView(R.layout.activity_occurrence)
+
+        goBack()
 
         submitButton = findViewById(R.id.btn_submit)
         submitButton.setOnClickListener {
             Toast.makeText(this,"Submissão Concluida",Toast.LENGTH_LONG).show()
         }
 
+    }
+
+    //função para o botão de back na toolbar
+    fun goBack(){
         toolbarInfo = findViewById(R.id.myToolBar)
         toolbarInfo.setNavigationOnClickListener {
             startActivity(Intent(this,MainActivity::class.java))

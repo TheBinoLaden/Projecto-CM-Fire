@@ -6,7 +6,28 @@
     android:id="@+id/drawerAdress"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MineAdresses">
+    tools:context=".AdressActivity">
+
+    <!--Criação do toolbar e do botão-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!--Toolbar-->
+        <include layout="@layout/toolbar_button_back"/>
+
+        <!--Botão-->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_addAdress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="32dp"
+            android:src="@drawable/ic_baseline_add_24" />
+    </RelativeLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -39,21 +60,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <include layout="@layout/toolbar"/>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_addAdress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="32dp"
-            android:src="@drawable/ic_baseline_add_24"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true" />
-
-    </RelativeLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>
