@@ -4,7 +4,7 @@
     android:layout_height="?attr/actionBarSize"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/myToolBar"
-    app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
-    android:background="@color/teal_200">
+    app:navigationIcon="@drawable/ic_baseline_arrow_back_24_white"
+    android:background="#6f1d1b">
 
 </androidx.appcompat.widget.Toolbar>

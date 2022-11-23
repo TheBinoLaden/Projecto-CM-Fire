@@ -86,6 +86,7 @@
                     android:background="@color/cinza">
 
                     <TextView
+                        android:id="@+id/casa"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Casa"
@@ -96,6 +97,7 @@
                         android:gravity="center_horizontal"/>
 
                     <TextView
+                        android:id="@+id/morada"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Escrever uma morada"

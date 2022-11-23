@@ -14,6 +14,8 @@
     <color name="transparentColor">#00FFFFFF</color>
 
     <color name="toolbarColor">#FF03DAC5</color>
-    <color name="addButtonColor">#FF03DAC5</color>
+    <color name="addButtonColor">#6f1d1b</color>
+
+
 
 </resources>

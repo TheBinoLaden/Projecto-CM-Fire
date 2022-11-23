@@ -1,21 +1,18 @@
 package com.example.finalproject
 
-import android.content.ClipDescription
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 
@@ -25,10 +22,16 @@ class AdressActivity : AppCompatActivity() {
     lateinit var description: String
     lateinit var toggle: ActionBarDrawerToggle
     lateinit var toolbar: androidx.appcompat.widget.Toolbar
+    lateinit var designacao: TextView
+    lateinit var morada: TextView
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_adresses)
+
+        designacao = findViewById(R.id.casa)
+        morada = findViewById(R.id.morada)
 
         toolbar=findViewById(R.id.myToolBar2)
         setSupportActionBar(toolbar)
@@ -55,7 +58,7 @@ class AdressActivity : AppCompatActivity() {
         //PopUp adicionar Morada
         addAdressButton = findViewById(R.id.btn_addAdress)
         addAdressButton.setOnClickListener {
-            val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_adress,null)
+            val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_new_adress,null)
             val mBuilder = AlertDialog.Builder(this).setView(mDialogView).setTitle("Adicionar Morada")
             val mAlertDialog = mBuilder.show()
 
@@ -71,6 +74,41 @@ class AdressActivity : AppCompatActivity() {
                 Toast.makeText(this,"Cancelou",Toast.LENGTH_LONG).show()
             }
         }
+
+        designacao.setOnClickListener {
+            val mDialogView1 = LayoutInflater.from(this).inflate(R.layout.dialog_info_adress,null)
+            val mBuilder1 = AlertDialog.Builder(this).setView(mDialogView1).setTitle("Informação da Morada")
+            val mAlertDialog1 = mBuilder1.show()
+
+            mDialogView1.findViewById<Button>(R.id.btn_dialogEdit).setOnClickListener {
+                mAlertDialog1.dismiss()
+                //Obter os dados do formulário
+                Toast.makeText(this, "Editou",Toast.LENGTH_LONG).show()
+            }
+
+            mDialogView1.findViewById<Button>(R.id.btn_dialogDelet).setOnClickListener {
+                mAlertDialog1.dismiss()
+                Toast.makeText(this,"Apagou",Toast.LENGTH_LONG).show()
+            }
+        }
+
+        morada.setOnClickListener {
+            val mDialogView1 = LayoutInflater.from(this).inflate(R.layout.dialog_info_adress,null)
+            val mBuilder1 = AlertDialog.Builder(this).setView(mDialogView1).setTitle("Informação da Morada")
+            val mAlertDialog1 = mBuilder1.show()
+
+            mDialogView1.findViewById<Button>(R.id.btn_dialogEdit).setOnClickListener {
+                mAlertDialog1.dismiss()
+                //Obter os dados do formulário
+                Toast.makeText(this, "Editou",Toast.LENGTH_LONG).show()
+            }
+
+            mDialogView1.findViewById<Button>(R.id.btn_dialogDelet).setOnClickListener {
+                mAlertDialog1.dismiss()
+                Toast.makeText(this,"Apagou",Toast.LENGTH_LONG).show()
+            }
+        }
+
 
     }
 
