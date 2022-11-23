@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        toolbar=findViewById(R.id.myToolBar)
+        toolbar = findViewById(R.id.myToolBar)
         setSupportActionBar(toolbar)
 
         val drawerLayout : DrawerLayout = findViewById(R.id.drawerLayout)
@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         navView.setNavigationItemSelectedListener {
             when(it.itemId){
+                R.id.nav_map -> startActivity(Intent(this,MainActivity::class.java))
                 R.id.nav_adress -> startActivity(Intent(this,AdressActivity::class.java))
                 R.id.nav_settings -> startActivity(Intent(this,SettingsActivity::class.java))
                 R.id.nav_occurrence -> startActivity(Intent(this,ListNewOccurrenceActivity::class.java))

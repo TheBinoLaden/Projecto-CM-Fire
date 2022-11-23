@@ -12,8 +12,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <!--Toolbar-->
-        <include layout="@layout/toolbar_button_back"/>
+
+        <include layout="@layout/toolbar_general"/>
 
         <!--Botão-->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -29,37 +29,97 @@
             android:src="@drawable/ic_baseline_add_24" />
     </RelativeLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="70dp"
             android:layout_marginEnd="16dp"
             android:textAlignment="center"
             android:text="As Minhas Moradas"
-            android:textSize="30dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textSize="30dp" />
 
-        <FrameLayout
-            android:id="@+id/table_adresses"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            android:layout_marginEnd="16dp" >
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TableLayout
+                android:id="@+id/tb_adress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
+                <TableRow
+                    android:background="@color/purple_200">
 
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Definição"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:padding="8sp"
+                        android:layout_weight="3"
+                        android:gravity="center_horizontal"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Morada"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:layout_weight="6"
+                        android:gravity="center_horizontal"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:background="@color/cinza">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Casa"
+                        android:textColor="@color/white"
+                        android:textSize="11sp"
+                        android:padding="4sp"
+                        android:layout_weight="3"
+                        android:gravity="center_horizontal"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Escrever uma morada"
+                        android:textColor="@color/white"
+                        android:textSize="11sp"
+                        android:padding="4sp"
+                        android:layout_weight="6"
+                        android:gravity="center_horizontal"/>
+
+                </TableRow>
+
+            </TableLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view01"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_menu"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>
