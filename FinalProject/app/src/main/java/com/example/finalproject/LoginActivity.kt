@@ -29,6 +29,7 @@ class LoginActivity : AppCompatActivity() {
         logIn = findViewById(R.id.logIn)
         logInLayout = findViewById(R.id.logInLayout)
 
+
         logInButton = findViewById(R.id.btn_logIn)
 
         signUp.setOnClickListener{

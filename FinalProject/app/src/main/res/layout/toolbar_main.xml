@@ -11,7 +11,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:id="@+id/myToolBar"
-            android:background="@color/teal_200">
+            android:background="@color/toolbarColor">
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -22,21 +22,31 @@
         android:id="@+id/btn_addProblem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="32dp"
-        android:src="@drawable/ic_baseline_add_24"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:src="@drawable/ic_baseline_add_24" />
 
     <TextView
         android:id="@+id/txt_risk"
-        android:text="Risco: Baixo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
-        android:layout_margin="32dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:background="@drawable/tv_border"
+        android:text="Risco: Baixo"
         android:textAlignment="center"
-        android:background="@color/white"
-        android:textSize="25dp"
-        android:layout_alignParentBottom="true"/>
+        android:textColor="@color/black"
+        android:textSize="20dp" />
 
 </RelativeLayout>

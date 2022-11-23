@@ -13,4 +13,7 @@
     <color name="RedColor">#A3072B</color>
     <color name="transparentColor">#00FFFFFF</color>
 
+    <color name="toolbarColor">#FF03DAC5</color>
+    <color name="addButtonColor">#FF03DAC5</color>
+
 </resources>

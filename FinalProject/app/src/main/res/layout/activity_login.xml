@@ -124,6 +124,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
+                    android:id="@+id/forgetP"
                     android:textSize="11sp"
                     android:text="Esqueceu-se da Password?"
                     android:textAlignment="textEnd"
