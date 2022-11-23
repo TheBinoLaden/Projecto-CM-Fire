@@ -8,4 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="cinza">#7C7C7C</color>
+
+    <color name="textColor">#EcE5EC</color>
+    <color name="RedColor">#A3072B</color>
+    <color name="transparentColor">#00FFFFFF</color>
+
 </resources>
