@@ -12,6 +12,7 @@
             android:layout_height="?attr/actionBarSize"
             android:id="@+id/myToolBar"
             android:background="@color/teal_200">
+
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>

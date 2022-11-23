@@ -3,18 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/pesquisa"
-        android:title="pesquisa"
+        android:id="@+id/search"
+        android:title="Search"
         android:icon="@drawable/ic_baseline_search_24"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom|withText"/>
 
     <item
-        android:id="@+id/teste1"
-        android:title="Teste1"/>
-
-    <item
-        android:id="@+id/teste2"
-        android:title="Teste2"/>
+        android:id="@+id/filter"
+        android:title="Filter"
+        android:icon="@drawable/ic_baseline_filter_alt_24"
+        app:showAsAction="ifRoom"/>
 
 </menu>

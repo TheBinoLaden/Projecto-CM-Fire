@@ -2,16 +2,21 @@ package com.example.finalproject
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.SearchView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 
@@ -65,7 +70,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu,menu)
 
-        val search : MenuItem? = menu?.findItem(R.id.pesquisa)
+        val search : MenuItem? = menu?.findItem(R.id.search)
         val searchView = search?.actionView as SearchView
         searchView.queryHint = "Search"
 
@@ -76,6 +81,15 @@ class MainActivity : AppCompatActivity() {
         if(toggle.onOptionsItemSelected(item)){
             return true
         }
+
+        if(item.itemId == R.id.filter){
+            val bottomSheetDialog = BottomSheetDialog(this,R.style.BottomSheetDialogTheme)
+            val bottomSheetView = LayoutInflater.from(applicationContext).inflate(R.layout.bottom_filters,findViewById<LinearLayout>(R.id.bottomFiltersContainer))
+
+            bottomSheetDialog.setContentView(bottomSheetView)
+            bottomSheetDialog.show()
+        }
+
         return super.onOptionsItemSelected(item)
     }
 }
