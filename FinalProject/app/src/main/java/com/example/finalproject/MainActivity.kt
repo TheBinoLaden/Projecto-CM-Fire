@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
             when(it.itemId){
                 R.id.nav_adress -> startActivity(Intent(this,AdressActivity::class.java))
                 R.id.nav_settings -> startActivity(Intent(this,SettingsActivity::class.java))
+                R.id.nav_occurrence -> startActivity(Intent(this,ListNewOccurrenceActivity::class.java))
             }
             true
         }
@@ -70,6 +71,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu,menu)
 
+        //Abre a aba do search
         val search : MenuItem? = menu?.findItem(R.id.search)
         val searchView = search?.actionView as SearchView
         searchView.queryHint = "Search"
@@ -78,10 +80,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        //Menu lateral
         if(toggle.onOptionsItemSelected(item)){
             return true
         }
 
+        //Ativa o popup dos filtros
         if(item.itemId == R.id.filter){
             val bottomSheetDialog = BottomSheetDialog(this,R.style.BottomSheetDialogTheme)
             val bottomSheetView = LayoutInflater.from(applicationContext).inflate(R.layout.bottom_filters,findViewById<LinearLayout>(R.id.bottomFiltersContainer))
