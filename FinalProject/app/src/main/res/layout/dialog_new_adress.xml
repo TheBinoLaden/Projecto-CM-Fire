@@ -25,15 +25,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginTop="10dp"
         android:gravity="center">
         <Button
             android:id="@+id/btn_dialogConfirm"
             android:text="Confirmar"
+            android:textColor="@color/white"
+            android:layout_marginRight="5dp"
+            android:background="#6f1d1b"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <Button
             android:id="@+id/btn_dialogCancel"
             android:text="Cancelar"
+            android:textColor="@color/white"
+            android:layout_marginLeft="5dp"
+            android:background="#6f1d1b"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>

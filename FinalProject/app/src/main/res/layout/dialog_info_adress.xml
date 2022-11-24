@@ -30,16 +30,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="5dp"
+        android:paddingTop="10dp"
         android:gravity="center">
         <Button
             android:id="@+id/btn_dialogEdit"
             android:text="Editar"
+            android:textColor="@color/white"
+            android:background="#6f1d1b"
+            android:layout_marginRight="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <Button
             android:id="@+id/btn_dialogDelet"
             android:text="Eliminar"
+            android:textColor="@color/white"
+            android:layout_marginLeft="5dp"
+            android:background="#6f1d1b"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>

@@ -135,7 +135,6 @@
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/singUpLayout"
-                android:background="@color/white"
                 android:padding="25dp"
                 android:visibility="gone"
                 android:gravity="center"
