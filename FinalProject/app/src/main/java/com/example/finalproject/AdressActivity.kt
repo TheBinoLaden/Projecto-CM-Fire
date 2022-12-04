@@ -13,6 +13,8 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.finalproject.occurrence.ListNewOccurrenceActivity
+import com.example.finalproject.usercontrol.SettingsActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 
@@ -49,8 +51,8 @@ class AdressActivity : AppCompatActivity() {
             when(it.itemId){
                 R.id.nav_map -> startActivity(Intent(this,MainActivity::class.java))
                 R.id.nav_adress -> startActivity(Intent(this,AdressActivity::class.java))
-                R.id.nav_settings -> startActivity(Intent(this,SettingsActivity::class.java))
-                R.id.nav_occurrence -> startActivity(Intent(this,ListNewOccurrenceActivity::class.java))
+                R.id.nav_settings -> startActivity(Intent(this, SettingsActivity::class.java))
+                R.id.nav_occurrence -> startActivity(Intent(this, ListNewOccurrenceActivity::class.java))
             }
             true
         }

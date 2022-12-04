@@ -4,4 +4,14 @@
     <string name="close">Close</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="log_in">Log In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="password_forgot">Esqueceu-se da Password?</string>
+    <string name="password_confirm">Comfirme Password</string>
+    <string name="or">OR</string>
+    <string name="twitter">twitter</string>
+    <string name="gmail">gmail</string>
+    <string name="facebook">facebook</string>
 </resources>

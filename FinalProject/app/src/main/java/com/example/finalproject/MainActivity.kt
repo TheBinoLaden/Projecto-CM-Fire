@@ -12,6 +12,9 @@ import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.finalproject.occurrence.ListNewOccurrenceActivity
+import com.example.finalproject.occurrence.OccurrenceActivity
+import com.example.finalproject.usercontrol.SettingsActivity
 import com.example.finalproject.weather.APIData
 import com.example.finalproject.weather.Model
 import com.google.android.gms.maps.GoogleMap

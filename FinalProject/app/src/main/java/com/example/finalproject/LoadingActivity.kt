@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import com.example.finalproject.usercontrol.LoginActivity
 
 class LoadingActivity : AppCompatActivity() {
 
@@ -14,7 +15,7 @@ class LoadingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_loading)
 
         Handler().postDelayed({
-            startActivity(Intent(this,LoginActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java))
             finish()
         },splashTime)
     }

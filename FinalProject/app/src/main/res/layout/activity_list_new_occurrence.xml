@@ -6,7 +6,7 @@
     android:id="@+id/drawerOccur"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ListNewOccurrenceActivity">
+    tools:context=".occurrence.ListNewOccurrenceActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"

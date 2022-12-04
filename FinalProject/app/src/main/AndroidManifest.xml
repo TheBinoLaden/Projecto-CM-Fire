@@ -17,7 +17,7 @@
         android:theme="@style/Theme.FinalProject"
         tools:targetApi="31">
         <activity
-            android:name=".LoginActivity"
+            android:name=".usercontrol.LoginActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -37,21 +37,21 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".ListNewOccurrenceActivity"
+            android:name=".occurrence.ListNewOccurrenceActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".usercontrol.SettingsActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".OccurrenceActivity"
+            android:name=".occurrence.OccurrenceActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -60,7 +60,7 @@
         <activity
             android:name=".AdressActivity"
             android:exported="true"
-            android:parentActivityName=".LoginActivity">
+            android:parentActivityName=".usercontrol.LoginActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
