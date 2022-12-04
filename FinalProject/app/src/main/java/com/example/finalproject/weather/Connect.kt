@@ -9,7 +9,7 @@ import retrofit2.http.Query
 
 class Connect {
     companion object {
-        private const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
+        private const val BASE_URL = "https://pro.openweathermap.org/data/2.5/"
 
         fun callApi(): CallAPI {
             return Retrofit.Builder()
