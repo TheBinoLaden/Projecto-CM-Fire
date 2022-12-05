@@ -54,7 +54,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"/>
                 <TextView
-                    android:id="@+id/singUp"
+                    android:id="@+id/signUp"
                     android:text="@string/sign_up"
                     android:paddingTop="5dp"
                     android:paddingRight="15dp"
@@ -79,7 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <com.google.android.material.textfield.TextInputLayout
-                    android:hint="@string/email"
+                    android:hint="@string/emailUsername"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:layout_marginTop="5dp"
@@ -134,7 +134,7 @@
 
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/singUpLayout"
+                android:id="@+id/signUpLayout"
                 android:padding="25dp"
                 android:visibility="gone"
                 android:gravity="center"
@@ -142,7 +142,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <com.google.android.material.textfield.TextInputLayout
-                    android:hint="@string/email"
+                    android:hint="@string/emailUsername"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:layout_marginTop="5dp"
@@ -154,7 +154,7 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:inputType="textEmailAddress"
-                        android:id="@+id/eMailsing"
+                        android:id="@+id/emailSign"
                         android:ems="10"
                         android:textSize="13sp"
                         android:textColor="@color/black"
@@ -177,7 +177,7 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:inputType="textPassword"
-                        android:id="@+id/passwordssing"
+                        android:id="@+id/pwdSign"
                         android:ems="10"
                         android:textSize="13sp"
                         android:textColor="@color/black"
@@ -199,7 +199,7 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:inputType="textPassword"
-                        android:id="@+id/passwords01sing"
+                        android:id="@+id/pwdCfmSign"
                         android:ems="10"
                         android:textSize="13sp"
                         android:textColor="@color/black"
