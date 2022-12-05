@@ -82,9 +82,11 @@ class LoginActivity : AppCompatActivity() {
             if (isSignUp) {
                 val email = txtEmailSign.text.toString()
                 val pwdSign = txtPwdSign.text.toString()
-                if (!txtPwdCfmSign.text.isNullOrBlank() && !LoginUtils.isUserInDB(email, pwdSign)) {
+                if (!txtPwdCfmSign.text.isNullOrBlank() && pwdSign.isNotBlank()
+                    && !LoginUtils.isUserInDB(email, pwdSign)
+                    && pwdSign.equals(txtPwdCfmSign)
+                ) {
                     LoginUtils.createUserInBD(email, pwdSign)
-
                 }
             } else if (LoginUtils.isUserInDB(txtEmail.text.toString(), txtPwd.text.toString())) {
                 Log.i(Tags.LOGIN.name, "Login Successful!!")
