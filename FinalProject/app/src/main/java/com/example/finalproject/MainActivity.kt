@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.SearchView
 import android.widget.TextView
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,6 +44,9 @@ class MainActivity : AppCompatActivity() {
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawerLayout)
         val navView: NavigationView = findViewById(R.id.nav_view)
+        val header: View = navView.getHeaderView(0)
+        val name = header.findViewById<TextView>(R.id.textView7)
+        name.text = intent.extras?.getString("username") ?: ""
 
         toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(toggle)
@@ -51,14 +56,21 @@ class MainActivity : AppCompatActivity() {
 
         navView.setNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.nav_map -> startActivity(Intent(this, MainActivity::class.java))
-                R.id.nav_adress -> startActivity(Intent(this, AdressActivity::class.java))
-                R.id.nav_settings -> startActivity(Intent(this, SettingsActivity::class.java))
+                R.id.nav_map -> startActivity(
+                    Intent(this, MainActivity::class.java).
+                    putExtra("username", name.text)
+                )
+                R.id.nav_adress -> startActivity(
+                    Intent(this, AddressActivity::class.java).
+                    putExtra("username", name.text)
+                )
+                R.id.nav_settings -> startActivity(
+                    Intent(this, SettingsActivity::class.java).
+                    putExtra("username", name.text)
+                )
                 R.id.nav_occurrence -> startActivity(
-                    Intent(
-                        this,
-                        ListNewOccurrenceActivity::class.java
-                    )
+                    Intent(this, ListNewOccurrenceActivity::class.java).
+                    putExtra("username", name.text)
                 )
             }
             true
@@ -73,7 +85,7 @@ class MainActivity : AppCompatActivity() {
         floatingButton = findViewById(R.id.btn_addProblem)
         txtInfo = findViewById(R.id.txt_risk)
         floatingButton.setOnClickListener {
-            //Colocar popup para adicionar ocurrencia
+            //Colocar pop-up para adicionar ocorrencia
             startActivity(Intent(this, OccurrenceActivity::class.java))
         }
 
@@ -136,4 +148,5 @@ class MainActivity : AppCompatActivity() {
 
         return super.onOptionsItemSelected(item)
     }
+
 }

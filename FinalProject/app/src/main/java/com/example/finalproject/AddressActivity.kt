@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -18,9 +19,9 @@ import com.example.finalproject.usercontrol.SettingsActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 
-class AdressActivity : AppCompatActivity() {
+class AddressActivity : AppCompatActivity() {
 
-    lateinit var addAdressButton : FloatingActionButton
+    lateinit var addAddressButton : FloatingActionButton
     lateinit var description: String
     lateinit var toggle: ActionBarDrawerToggle
     lateinit var toolbar: androidx.appcompat.widget.Toolbar
@@ -40,6 +41,11 @@ class AdressActivity : AppCompatActivity() {
 
         val drawerLayout : DrawerLayout = findViewById(R.id.drawerAdress)
         val navView : NavigationView = findViewById(R.id.nav_view01)
+        val header: View = navView.getHeaderView(0)
+        val name = header.findViewById<TextView>(R.id.textView7)
+        name.text = intent.extras?.getString("username") ?: ""
+
+
 
         toggle = ActionBarDrawerToggle(this,drawerLayout,R.string.open,R.string.close)
         drawerLayout.addDrawerListener(toggle)
@@ -50,7 +56,7 @@ class AdressActivity : AppCompatActivity() {
         navView.setNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.nav_map -> startActivity(Intent(this,MainActivity::class.java))
-                R.id.nav_adress -> startActivity(Intent(this,AdressActivity::class.java))
+                R.id.nav_adress -> startActivity(Intent(this,AddressActivity::class.java))
                 R.id.nav_settings -> startActivity(Intent(this, SettingsActivity::class.java))
                 R.id.nav_occurrence -> startActivity(Intent(this, ListNewOccurrenceActivity::class.java))
             }
@@ -58,8 +64,8 @@ class AdressActivity : AppCompatActivity() {
         }
 
         //PopUp adicionar Morada
-        addAdressButton = findViewById(R.id.btn_addAdress)
-        addAdressButton.setOnClickListener {
+        addAddressButton = findViewById(R.id.btn_addAdress)
+        addAddressButton.setOnClickListener {
             val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_new_adress,null)
             val mBuilder = AlertDialog.Builder(this).setView(mDialogView).setTitle("Adicionar Morada")
             val mAlertDialog = mBuilder.show()

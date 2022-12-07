@@ -12,7 +12,8 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.finalproject.MainActivity
 import com.example.finalproject.R
-import com.example.finalproject.firebase.LoginUtils
+import com.example.finalproject.firebase.dao.LoginDao
+import com.example.finalproject.firebase.utils.UserUtils
 import com.example.finalproject.misc.Tags
 import com.google.android.material.textfield.TextInputEditText
 
@@ -28,6 +29,7 @@ class LoginActivity : AppCompatActivity() {
     lateinit var txtEmailSign: TextInputEditText
     lateinit var txtPwdSign: TextInputEditText
     lateinit var txtPwdCfmSign: TextInputEditText
+    lateinit var contextArray: HashMap<String, Any> // context
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +53,8 @@ class LoginActivity : AppCompatActivity() {
         txtEmailSign = findViewById(R.id.emailSign)
         txtPwdSign = findViewById(R.id.pwdSign)
         txtPwdCfmSign = findViewById(R.id.pwdCfmSign)
+
+        contextArray = HashMap(3)
 
         var isSignUp = false
 
@@ -82,15 +86,33 @@ class LoginActivity : AppCompatActivity() {
             if (isSignUp) {
                 val email = txtEmailSign.text.toString()
                 val pwdSign = txtPwdSign.text.toString()
-                if (!txtPwdCfmSign.text.isNullOrBlank() && pwdSign.isNotBlank()
-                    && !LoginUtils.isUserInDB(email, pwdSign)
-                    && pwdSign.equals(txtPwdCfmSign)
-                ) {
-                    LoginUtils.createUserInBD(email, pwdSign)
+                val pwdCfm = txtPwdCfmSign.text.toString()
+                if (pwdCfm.isNotBlank() && pwdSign.isNotBlank() && pwdSign == pwdCfm) {
+                    LoginDao.createUserInBD(email, pwdSign)
                 }
-            } else if (LoginUtils.isUserInDB(txtEmail.text.toString(), txtPwd.text.toString())) {
+            } else if (LoginDao.isUserInDB(
+                    txtEmail.text.toString(), txtPwd.text.toString(), contextArray
+                )
+            ) {
                 Log.i(Tags.LOGIN.name, "Login Successful!!")
-                startActivity(Intent(this, MainActivity::class.java))
+                val intent = Intent(this, MainActivity::class.java)
+                val emailFromLogin = txtEmail.text.toString()
+                val emailFromSignUp = txtEmailSign.text.toString()
+                if (emailFromLogin.isNotBlank()) {
+                    intent.putExtra(
+                        "username",
+                        UserUtils.handlingEmailUsername(emailFromLogin)
+                    )
+                    intent.putExtra("favPlaces", contextArray["favPlaces"].toString())
+                } else if (emailFromSignUp.isNotBlank()) {
+                    intent.putExtra(
+                        "username",
+                        UserUtils.handlingEmailUsername(emailFromSignUp)
+                    )
+                    intent.putExtra("favPlaces", contextArray["favPlaces"].toString())
+                }
+                startActivity(intent)
+
             }
         }
     }

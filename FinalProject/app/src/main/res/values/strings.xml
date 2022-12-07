@@ -14,4 +14,6 @@
     <string name="twitter">twitter</string>
     <string name="gmail">gmail</string>
     <string name="facebook">facebook</string>
+    <string name="verificado">Verificado</string>
+    <string name="novas_ocorrencias">Novas Ocorrências</string>
 </resources>

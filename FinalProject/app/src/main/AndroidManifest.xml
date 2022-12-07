@@ -58,7 +58,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".AdressActivity"
+            android:name=".AddressActivity"
             android:exported="true"
             android:parentActivityName=".usercontrol.LoginActivity">
             <meta-data

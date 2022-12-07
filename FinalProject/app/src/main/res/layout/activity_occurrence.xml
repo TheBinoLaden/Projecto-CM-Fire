@@ -24,7 +24,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="70dp"
             android:layout_marginEnd="16dp"
-            android:text="Adicionar Ocurrência"
+            android:text="Adicionar Ocorrência"
             android:textAlignment="center"
             android:textSize="30dp"
             app:layout_constraintEnd_toEndOf="parent"

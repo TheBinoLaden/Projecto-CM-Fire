@@ -6,7 +6,7 @@
     android:id="@+id/drawerAdress"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AdressActivity">
+    tools:context=".AddressActivity">
 
     <!--Criação do toolbar e do botão-->
     <RelativeLayout
