@@ -19,5 +19,6 @@ class AddressDao {
             dbConnection.collection("users").document(username)
                 .set(dataToUpdate, SetOptions.merge())
         }
+
     }
 }

@@ -1,4 +1,4 @@
-package com.example.finalproject.usercontrol
+package com.example.finalproject.activity.usercontrol
 
 import android.content.Intent
 import android.os.Build
@@ -10,11 +10,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.example.finalproject.MainActivity
+import com.example.finalproject.activity.MainActivity
 import com.example.finalproject.R
 import com.example.finalproject.firebase.dao.LoginDao
 import com.example.finalproject.firebase.utils.UserUtils
-import com.example.finalproject.misc.Tags
+import com.example.finalproject.enums.Tags
 import com.google.android.material.textfield.TextInputEditText
 
 class LoginActivity : AppCompatActivity() {

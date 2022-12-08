@@ -1,4 +1,4 @@
-package com.example.finalproject.misc
+package com.example.finalproject.enums
 
 enum class Tags {
 

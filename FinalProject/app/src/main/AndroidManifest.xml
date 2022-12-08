@@ -17,14 +17,14 @@
         android:theme="@style/Theme.FinalProject"
         tools:targetApi="31">
         <activity
-            android:name=".usercontrol.LoginActivity"
+            android:name=".activity.usercontrol.LoginActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".LoadingActivity"
+            android:name=".activity.LoadingActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,36 +37,36 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".occurrence.ListNewOccurrenceActivity"
+            android:name=".activity.occurrence.ListNewOccurrenceActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".usercontrol.SettingsActivity"
+            android:name=".activity.usercontrol.SettingsActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".occurrence.OccurrenceActivity"
+            android:name=".activity.occurrence.OccurrenceActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".AddressActivity"
+            android:name=".activity.address.AddressActivity"
             android:exported="true"
-            android:parentActivityName=".usercontrol.LoginActivity">
+            android:parentActivityName=".activity.usercontrol.LoginActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

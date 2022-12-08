@@ -1,7 +1,7 @@
 package com.example.finalproject.firebase.dao
 
 import android.util.Log
-import com.example.finalproject.misc.Tags
+import com.example.finalproject.enums.Tags
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore

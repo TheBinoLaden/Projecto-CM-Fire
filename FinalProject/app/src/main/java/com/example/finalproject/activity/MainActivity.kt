@@ -1,4 +1,4 @@
-package com.example.finalproject
+package com.example.finalproject.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,9 +13,11 @@ import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
-import com.example.finalproject.occurrence.ListNewOccurrenceActivity
-import com.example.finalproject.occurrence.OccurrenceActivity
-import com.example.finalproject.usercontrol.SettingsActivity
+import com.example.finalproject.R
+import com.example.finalproject.activity.address.AddressActivity
+import com.example.finalproject.activity.occurrence.ListNewOccurrenceActivity
+import com.example.finalproject.activity.occurrence.OccurrenceActivity
+import com.example.finalproject.activity.usercontrol.SettingsActivity
 import com.example.finalproject.weather.APIData
 import com.example.finalproject.weather.Model
 import com.google.android.gms.maps.GoogleMap
@@ -56,22 +58,31 @@ class MainActivity : AppCompatActivity() {
 
         navView.setNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.nav_map -> startActivity(
-                    Intent(this, MainActivity::class.java).
-                    putExtra("username", name.text)
-                )
-                R.id.nav_adress -> startActivity(
-                    Intent(this, AddressActivity::class.java).
-                    putExtra("username", name.text)
-                )
-                R.id.nav_settings -> startActivity(
-                    Intent(this, SettingsActivity::class.java).
-                    putExtra("username", name.text)
-                )
-                R.id.nav_occurrence -> startActivity(
-                    Intent(this, ListNewOccurrenceActivity::class.java).
-                    putExtra("username", name.text)
-                )
+                R.id.nav_map -> {
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("username", name.text)
+                    intent.putExtra("favPlaces", this.intent.extras?.getString("favPlaces") ?: "")
+                    startActivity(intent)
+                }
+                R.id.nav_adress -> {
+                    val intent = Intent(this, AddressActivity::class.java)
+                    intent.putExtra("username", name.text)
+                    intent.putExtra("favPlaces", this.intent.extras?.getString("favPlaces") ?: "")
+                    startActivity(intent)
+                }
+                R.id.nav_settings -> {
+                    val intent = Intent(this, SettingsActivity::class.java)
+                    intent.putExtra("username", name.text)
+                    intent.putExtra("favPlaces", this.intent.extras?.getString("favPlaces") ?: "")
+                    startActivity(intent)
+                }
+                R.id.nav_occurrence -> {
+                    val intent = Intent(this, ListNewOccurrenceActivity::class.java)
+                    intent.putExtra("username", name.text)
+                    intent.putExtra("favPlaces", this.intent.extras?.getString("favPlaces") ?: "")
+                    startActivity(intent)
+                }
+
             }
             true
         }

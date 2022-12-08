@@ -1,4 +1,4 @@
-package com.example.finalproject.occurrence
+package com.example.finalproject.activity.occurrence
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,7 +7,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import com.example.finalproject.MainActivity
+import com.example.finalproject.activity.MainActivity
 import com.example.finalproject.R
 import com.example.finalproject.firebase.utils.OccurrencesUtils
 import com.example.finalproject.weather.Model

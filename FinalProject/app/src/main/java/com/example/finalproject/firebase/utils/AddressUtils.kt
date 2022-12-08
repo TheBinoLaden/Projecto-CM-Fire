@@ -1,12 +1,5 @@
 package com.example.finalproject.firebase.utils
 
-import android.view.LayoutInflater
-import android.widget.TableLayout
-import android.widget.TableRow
-import android.widget.TextView
-import androidx.core.view.children
-import com.example.finalproject.AddressActivity
-import com.example.finalproject.R
 import com.example.finalproject.firebase.dao.AddressDao
 
 
@@ -21,25 +14,29 @@ class AddressUtils {
             address: String,
             description: String
         ) {
-
-            val fullAddress = "$address:$description"
+            var fullAddress = ""
+            if (favPlaces.isBlank()) {
+                fullAddress = "$address:$description"
+            } else {
+                fullAddress = "-$address:$description"
+            }
             val newList = favPlaces + fullAddress
 
             AddressDao.addNewAddress(username, newList)
         }
 
-        fun handleAddressList(activity: AddressActivity, table: TableLayout) {
+        fun handleAddressList(listStringify: String): ArrayList<String> {
 
-            for (b in table.children) {
-                // Inflate your row "template" and fill out the fields.
-                val row: TableRow = LayoutInflater.from(activity)
-                    .inflate(R.layout.activity_adresses, null) as TableRow
-                (row.findViewById(R.id.casa) as TextView).text = "test"
-                (row.findViewById(R.id.morada) as TextView).text = "Testlol"
-                table.addView(row)
+            val arraylist = ArrayList<String>(0)
+
+            val array = listStringify.removeSurrounding("[", "]").split('-')
+
+            for (item in array) {
+                val location = item.split(":")[0]
+                val description = item.split(":")[1]
+                arraylist.add("$location $description")
             }
-            table.requestLayout()
-
+            return arraylist
         }
     }
 }

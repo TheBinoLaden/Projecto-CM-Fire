@@ -4,9 +4,10 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import com.example.finalproject.R
 import com.example.finalproject.firebase.dao.OccurrencesDao
-import com.example.finalproject.occurrence.ListNewOccurrenceActivity
+import com.example.finalproject.activity.occurrence.ListNewOccurrenceActivity
 import com.example.finalproject.weather.Model
 import java.util.*
+import kotlin.collections.ArrayList
 
 class OccurrencesUtils {
 
@@ -24,15 +25,11 @@ class OccurrencesUtils {
 
         }
 
-        fun handleOccurrencesList(activity: ListNewOccurrenceActivity, listView: ListView) {
+        fun handleOccurrencesList():
+                ArrayList<String> {
 
-            val occurrenceList = OccurrencesDao.searchRecentOccurrences()
-            val adapter: ArrayAdapter<*> = ArrayAdapter(
-                activity,
-                R.layout.activity_listoccurrences,
-                occurrenceList
-            )
-            listView.adapter = adapter
+            return OccurrencesDao.searchRecentOccurrences()
+
 
         }
     }

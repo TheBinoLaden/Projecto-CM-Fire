@@ -1,10 +1,11 @@
-package com.example.finalproject
+package com.example.finalproject.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import com.example.finalproject.usercontrol.LoginActivity
+import com.example.finalproject.R
+import com.example.finalproject.activity.usercontrol.LoginActivity
 
 class LoadingActivity : AppCompatActivity() {
 
