@@ -26,10 +26,9 @@ class AddressUtils {
         }
 
         fun handleAddressList(listStringify: String): ArrayList<String> {
-
             val arraylist = ArrayList<String>(0)
-
             val array = listStringify.removeSurrounding("[", "]").split('-')
+            if (array[0].length <= 1) return ArrayList()
 
             for (item in array) {
                 val location = item.split(":")[0]

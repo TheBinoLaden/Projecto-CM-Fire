@@ -2,6 +2,7 @@ package com.example.finalproject.activity.address
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -58,7 +59,6 @@ class AddressActivity : AppCompatActivity() {
 
         val addresses = this.intent.extras?.getString("favPlaces") ?: ""
         findViewById<ComposeView>(R.id.my_composable).setContent {
-
             ListAnimationComponent(AddressUtils.handleAddressList(addresses))
         }
 
