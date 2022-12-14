@@ -2,40 +2,18 @@ package com.example.finalproject.firebase.utils
 
 import com.example.finalproject.firebase.dao.AddressDao
 
-
 class AddressUtils {
-
-
     companion object {
-
-        fun addNewAddress(
-            username: String,
-            favPlaces: String,
-            address: String,
-            description: String
-        ) {
-            var fullAddress = ""
-            if (favPlaces.isBlank()) {
-                fullAddress = "$address:$description"
-            } else {
-                fullAddress = "-$address:$description"
-            }
-            val newList = favPlaces + fullAddress
-
-            AddressDao.addNewAddress(username, newList)
+        fun addNewAddress(username: String, address: String, description: String) {
+            AddressDao.addNewAddress(username, address, description)
         }
 
-        fun handleAddressList(listStringify: String): ArrayList<String> {
-            val arraylist = ArrayList<String>(0)
-            val array = listStringify.removeSurrounding("[", "]").split('-')
-            if (array[0].length <= 1) return ArrayList()
+        fun getFavAddress(username: String, callback: (address: ArrayList<Map<String, String>>) -> (Unit)) {
+            AddressDao.getFavAddress(username, callback)
+        }
 
-            for (item in array) {
-                val location = item.split(":")[0]
-                val description = item.split(":")[1]
-                arraylist.add("$location $description")
-            }
-            return arraylist
+        fun removeAddress(username: String, addressToDel: Map<String, String>) {
+            AddressDao.removeAddress(username, addressToDel)
         }
     }
 }

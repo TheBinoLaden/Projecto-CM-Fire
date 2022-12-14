@@ -7,16 +7,16 @@
     android:padding="10dp">
 
     <EditText
-        android:id="@+id/dialogDefinition"
-        android:hint="Insira Definição"
+        android:id="@+id/dialogAddress"
+        android:hint="Insira Morada"
         android:maxLength="15"
         android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <EditText
-        android:id="@+id/dialogAdress"
-        android:hint="Insira Morada"
+        android:id="@+id/dialogDescription"
+        android:hint="Insira Descrição"
         android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

@@ -2,7 +2,6 @@ package com.example.finalproject.activity.address
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -44,11 +43,16 @@ import com.example.finalproject.activity.usercontrol.SettingsActivity
 import com.example.finalproject.firebase.utils.AddressUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class AddressActivity : AppCompatActivity() {
 
     lateinit var addAddressButton: FloatingActionButton
+    lateinit var username: String
     lateinit var description: String
+    lateinit var address: String
+    lateinit var favAddresses: ArrayList<Map<String, String>>
     lateinit var toggle: ActionBarDrawerToggle
     lateinit var toolbar: androidx.appcompat.widget.Toolbar
 
@@ -57,9 +61,11 @@ class AddressActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_adresses)
 
-        val addresses = this.intent.extras?.getString("favPlaces") ?: ""
-        findViewById<ComposeView>(R.id.my_composable).setContent {
-            ListAnimationComponent(AddressUtils.handleAddressList(addresses))
+        username = this.intent.extras?.getString("username") ?: ""
+        AddressUtils.getFavAddress(username) { favAddress ->
+            findViewById<ComposeView>(R.id.my_composable).setContent {
+                ListAnimationComponent(favAddress)
+            }
         }
 
         toolbar = findViewById(R.id.myToolBar2)
@@ -117,16 +123,19 @@ class AddressActivity : AppCompatActivity() {
             val mAlertDialog = mBuilder.show()
 
             mDialogView.findViewById<Button>(R.id.btn_dialogConfirm).setOnClickListener {
+                address = mAlertDialog.findViewById<EditText>(R.id.dialogAddress)?.text.toString()
+                description = mAlertDialog.findViewById<EditText>(R.id.dialogDescription)?.text.toString()
+                AddressUtils.addNewAddress(username, address, description)
                 mAlertDialog.dismiss()
-                //Obter os dados do formulário
-                description =
-                    mAlertDialog.findViewById<EditText>(R.id.dialogDefinition)?.text.toString()
-                Toast.makeText(this, description, Toast.LENGTH_LONG).show()
+                AddressUtils.getFavAddress(username) { favAddress ->
+                    findViewById<ComposeView>(R.id.my_composable).setContent {
+                        ListAnimationComponent(favAddress)
+                    }
+                }
             }
 
             mDialogView.findViewById<Button>(R.id.btn_dialogCancel).setOnClickListener {
                 mAlertDialog.dismiss()
-                Toast.makeText(this, "Cancelou", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -134,14 +143,14 @@ class AddressActivity : AppCompatActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @ExperimentalAnimationApi
     @Composable
-    fun ListAnimationComponent(addressList: List<String>) {
-        val deletedAddressList = remember { mutableStateListOf<String>() }
+    fun ListAnimationComponent(favAddress: ArrayList<Map<String, String>>) {
+        val deletedAddressList = remember { mutableStateListOf<Map<String, String>>() }
 
         LazyColumn(
             modifier = Modifier.fillMaxWidth()
         ) {
             itemsIndexed(
-                items = addressList
+                items = favAddress
             ) { index, address ->
                 AnimatedVisibility(
                     visible = !deletedAddressList.contains(address),
@@ -169,7 +178,7 @@ class AddressActivity : AppCompatActivity() {
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                address, style = TextStyle(
+                                address["Address"]!!, style = TextStyle(
                                     color = Color.Black,
                                     fontSize = 20.sp,
                                     textAlign = TextAlign.Center
@@ -178,8 +187,7 @@ class AddressActivity : AppCompatActivity() {
                             IconButton(
                                 onClick = {
                                     deletedAddressList.add(address)
-
-                                    //TODO also delete in DB
+                                    AddressUtils.removeAddress(username, address)
                                 }
                             ) {
                                 Icon(
@@ -199,7 +207,7 @@ class AddressActivity : AppCompatActivity() {
     }
 
     @Composable
-    fun DialogInfo(address: String, onDismiss: () -> Unit) {
+    fun DialogInfo(address: Map<String, String>, onDismiss: () -> Unit) {
         val contextForToast = LocalContext.current.applicationContext
 
         Dialog(
@@ -216,7 +224,7 @@ class AddressActivity : AppCompatActivity() {
                 ) {
                     Text(
                         modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
-                        text = address,
+                        text = address["Address"]!!,
                         textAlign = TextAlign.Center,
                         style = TextStyle(
                             fontSize = 20.sp
@@ -225,7 +233,7 @@ class AddressActivity : AppCompatActivity() {
 
                     Text(
                         modifier = Modifier.padding(start = 12.dp, end = 12.dp),
-                        text = "Some bla bla",
+                        text = address["Description"]!!,
                         textAlign = TextAlign.Center,
                         style = TextStyle(
                             fontSize = 14.sp

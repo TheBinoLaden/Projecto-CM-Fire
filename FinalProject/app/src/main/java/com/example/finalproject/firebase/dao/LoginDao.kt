@@ -1,6 +1,7 @@
 package com.example.finalproject.firebase.dao
 
 import android.util.Log
+import android.widget.Toast
 import com.example.finalproject.enums.Tags
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
@@ -9,7 +10,6 @@ import com.google.firebase.ktx.Firebase
 import java.util.concurrent.TimeUnit
 
 class LoginDao {
-
     companion object {
         private var pwdStatic = "pwd"
 
@@ -53,12 +53,14 @@ class LoginDao {
         /**
          * Creates a new Normal User into the DB
          */
-        fun createUserInBD(username: String, pwd: String) {
+        fun createUserInBD(username: String, pwd: String): Boolean {
 
             if (!isUserInDB(username, pwd)) {
                 UserDao.createNewNormalUser(username, pwd)
+                return true
             }
             Log.d(Tags.ERROR.name, "Task Error. Error Adding User to DB.")
+            return false
         }
 
         /**
@@ -115,10 +117,6 @@ class LoginDao {
                 }
                 (result.result.get(pwdStatic) as String).compareTo(pwd) == 0
             } else false
-
-
         }
     }
-
-
 }
