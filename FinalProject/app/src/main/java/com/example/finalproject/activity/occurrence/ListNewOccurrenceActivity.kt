@@ -76,25 +76,21 @@ class ListNewOccurrenceActivity : AppCompatActivity() {
                 R.id.nav_map -> {
                     val intent = Intent(this, MainActivity::class.java)
                     intent.putExtra("username", name.text)
-                    intent.putExtra("favPlaces", this.intent.extras?.getString("favPlaces") ?: "")
                     startActivity(intent)
                 }
                 R.id.nav_adress -> {
                     val intent = Intent(this, AddressActivity::class.java)
                     intent.putExtra("username", name.text)
-                    intent.putExtra("favPlaces", this.intent.extras?.getString("favPlaces") ?: "")
                     startActivity(intent)
                 }
                 R.id.nav_settings -> {
                     val intent = Intent(this, SettingsActivity::class.java)
                     intent.putExtra("username", name.text)
-                    intent.putExtra("favPlaces", this.intent.extras?.getString("favPlaces") ?: "")
                     startActivity(intent)
                 }
                 R.id.nav_occurrence -> {
                     val intent = Intent(this, ListNewOccurrenceActivity::class.java)
                     intent.putExtra("username", name.text)
-                    intent.putExtra("favPlaces", this.intent.extras?.getString("favPlaces") ?: "")
                     startActivity(intent)
                 }
 

@@ -115,11 +115,9 @@ class LoginActivity : AppCompatActivity() {
                 val emailFromSignUp = txtEmailSign.text.toString()
                 if (emailFromLogin.isNotBlank()) {
                     intent.putExtra("username", UserUtils.handlingEmailUsername(emailFromLogin))
-                    intent.putExtra("favPlaces", contextArray["favPlaces"].toString())
                 }
                 else if (emailFromSignUp.isNotBlank()) {
                     intent.putExtra("username", UserUtils.handlingEmailUsername(emailFromSignUp))
-                    intent.putExtra("favPlaces", contextArray["favPlaces"].toString())
                 }
                 startActivity(intent)
             }
