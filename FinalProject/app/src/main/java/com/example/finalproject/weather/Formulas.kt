@@ -62,21 +62,14 @@ class Formulas {
         }
 
         // maybe use this https://openweathermap.org/forecast5
-        fun cumulativeIndex(
-            airTemperature: Float,
-            relativeHumidity: Float,
-            rainfallVolume: Float
-        ): Float {
+        fun cumulativeIndex(airTemperature: Float, relativeHumidity: Float, rainfallVolume: Float): Float {
             var sum = 0F
             //TODO for loop incorrect, replace by last day temps
-            for (i in 1..2) {
-                sum += ignitionIndex(airTemperature, relativeHumidity)
-            }
+            sum += ignitionIndex(airTemperature, relativeHumidity)
             return rainfallFactor(rainfallVolume) * sum
         }
 
-        fun fireDangerIndex(airTemperature: Float, relativeHumidity: Float, rainfallVolume: Float,
-                            windSpeed: Float): Int {
+        fun fireDangerIndex(airTemperature: Float, relativeHumidity: Float, rainfallVolume: Float, windSpeed: Float): Int {
             return ignitionIndexFactor(ignitionIndex(airTemperature, relativeHumidity)) +
                     cumulativeIndexFactor(cumulativeIndex(airTemperature, relativeHumidity, rainfallVolume)) +
                     windFactor(windSpeed)

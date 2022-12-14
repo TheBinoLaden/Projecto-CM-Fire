@@ -19,6 +19,7 @@ import com.example.finalproject.activity.occurrence.ListNewOccurrenceActivity
 import com.example.finalproject.activity.occurrence.OccurrenceActivity
 import com.example.finalproject.activity.usercontrol.SettingsActivity
 import com.example.finalproject.weather.APIData
+import com.example.finalproject.weather.Formulas
 import com.example.finalproject.weather.Model
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -106,6 +107,8 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(data: Model.Result) {
                 val desc: String = data.weather[0].description
                 val temp: Float = data.main.temp
+                val humidity: Float = data.main.humidity
+//                val rainVolume: Float = data.rain[0].oneHour
                 val country: String = data.sys.country
                 val windSpeed: Float = data.wind.speed
                 val windDeg: Int = data.wind.deg
@@ -116,6 +119,9 @@ class MainActivity : AppCompatActivity() {
 //                            "windSpeed: $windSpeed\n" +
 //                            "windDegrees: $windDeg")
                 Log.d("APICALL", data.toString())
+                val fdi = Formulas.fireDangerIndex(temp, humidity, 2f, windSpeed)
+                Log.d("APICALL", "Fire Danger Index: $fdi")
+                txtInfo.text = "Risco: ${Formulas.fdiInterpretation(fdi)}"
             }
 
             override fun onFailure(error: Throwable) {
