@@ -3,6 +3,7 @@ package com.example.finalproject.activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
@@ -62,6 +63,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         testeLocais = ArrayList()
         testeLocais!!.add(ponto1)
         testeLocais!!.add(ponto2)
+
+        val testeMoradaEscrita = getAddressCoordenates("Rua Serra de Nisa 4")
+        val testeEscrita = testeMoradaEscrita.latitude.toString() + "," + testeMoradaEscrita.longitude.toString()
+        Log.d("tag",testeEscrita)
+
+        testeLocais!!.add(testeMoradaEscrita)
 
         toolbar = findViewById(R.id.myToolBar)
         setSupportActionBar(toolbar)
@@ -190,7 +197,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         for (i in testeLocais!!.indices){
 
-            val morada = getAdressName(testeLocais!![i].latitude,testeLocais!![i].longitude)
+            val morada = getAddressName(testeLocais!![i].latitude,testeLocais!![i].longitude)
 
             if (i == 0){
                 val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.map_marker_fire,null)
@@ -222,13 +229,24 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun getAdressName(lat: Double, lon: Double): String{
+    //Função permite obter o morada através de coordenadas
+    private fun getAddressName(lat: Double, lon: Double): String{
         var addressName = ""
         var geoCoder = Geocoder(this, Locale.getDefault())
         var address = geoCoder.getFromLocation(lat,lon,1)
 
         addressName = address!!.get(0).getAddressLine(0)
         return addressName
+    }
+
+    //Função permite obter coordenadas através de morada
+    private fun getAddressCoordenates(address: String):com.google.android.gms.maps.model.LatLng{
+        var geoCoder = Geocoder(this, Locale.getDefault())
+        var cAddress = geoCoder.getFromLocationName(address,1)
+
+        var location: Address = cAddress!!.get(0)
+        var d = com.google.android.gms.maps.model.LatLng(location.latitude, location.longitude)
+        return d
     }
 
     private fun viewToBitmap(view: View): Bitmap?{
