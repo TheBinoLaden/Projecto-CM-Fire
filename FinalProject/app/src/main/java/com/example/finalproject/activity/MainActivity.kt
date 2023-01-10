@@ -18,6 +18,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.finalproject.CustomInfoWindowAdapter
 import com.example.finalproject.R
 import com.example.finalproject.activity.address.AddressActivity
 import com.example.finalproject.activity.occurrence.ListNewOccurrenceActivity
@@ -30,13 +31,11 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
-import com.google.type.LatLng
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -64,11 +63,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         testeLocais!!.add(ponto1)
         testeLocais!!.add(ponto2)
 
+        //Teste da Morada Escrita
         val testeMoradaEscrita = getAddressCoordenates("Rua Serra de Nisa 4")
         val testeEscrita = testeMoradaEscrita.latitude.toString() + "," + testeMoradaEscrita.longitude.toString()
-        Log.d("tag",testeEscrita)
 
         testeLocais!!.add(testeMoradaEscrita)
+        //Fim do Teste
 
         toolbar = findViewById(R.id.myToolBar)
         setSupportActionBar(toolbar)
@@ -208,7 +208,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 googleMap.addMarker(MarkerOptions()
                     .position(testeLocais!![i])
                     .icon(smallMarkerIcon)
-                    .title("Morada:")
+                    .title("Definição")
                     .snippet(morada))
             }else{
                 val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.map_marker_work,null)
@@ -219,33 +219,36 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 googleMap.addMarker(MarkerOptions()
                     .position(testeLocais!![i])
                     .icon(smallMarkerIcon)
-                    .title("Morada:")
+                    .title("Definição")
                     .snippet(morada))
             }
 
             googleMap.animateCamera(CameraUpdateFactory.zoomTo(18.0f))
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(testeLocais!!.get(i)))
 
+            googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
+
         }
     }
 
     //Função permite obter o morada através de coordenadas
     private fun getAddressName(lat: Double, lon: Double): String{
-        var addressName = ""
-        var geoCoder = Geocoder(this, Locale.getDefault())
-        var address = geoCoder.getFromLocation(lat,lon,1)
+        val geoCoder = Geocoder(this, Locale.getDefault())
+        val addressList = geoCoder.getFromLocation(lat,lon,1)
 
-        addressName = address!!.get(0).getAddressLine(0)
-        return addressName
+        //val address = addressList!![0].getAddressLine(0)
+        val address = addressList!![0].getAddressLine(0) + "\n Para mais informações, clique"
+        Log.d("tag",address)
+        return address
     }
 
     //Função permite obter coordenadas através de morada
     private fun getAddressCoordenates(address: String):com.google.android.gms.maps.model.LatLng{
-        var geoCoder = Geocoder(this, Locale.getDefault())
-        var cAddress = geoCoder.getFromLocationName(address,1)
+        val geoCoder = Geocoder(this, Locale.getDefault())
+        val cAddress = geoCoder.getFromLocationName(address,1)
 
-        var location: Address = cAddress!!.get(0)
-        var d = com.google.android.gms.maps.model.LatLng(location.latitude, location.longitude)
+        val location: Address = cAddress!!.get(0)
+        val d = com.google.android.gms.maps.model.LatLng(location.latitude, location.longitude)
         return d
     }
 
@@ -257,6 +260,5 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         view.draw(canvas)
         return bitmap
     }
-
 
 }
