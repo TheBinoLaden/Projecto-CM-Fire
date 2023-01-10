@@ -21,15 +21,18 @@ import com.example.finalproject.activity.usercontrol.SettingsActivity
 import com.example.finalproject.weather.APIData
 import com.example.finalproject.weather.Formulas
 import com.example.finalproject.weather.Model
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import com.google.type.LatLng
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     lateinit var toggle: ActionBarDrawerToggle
     lateinit var toolbar: androidx.appcompat.widget.Toolbar
@@ -38,9 +41,19 @@ class MainActivity : AppCompatActivity() {
     lateinit var floatingButton: FloatingActionButton
     lateinit var txtInfo: TextView
 
+    //Variaveis de teste dos pontos no mapa
+    val ponto1 = com.google.android.gms.maps.model.LatLng(38.589607, -9.154542)
+    val ponto2 = com.google.android.gms.maps.model.LatLng(38.589846, -9.154051)
+    private var testeLocais: ArrayList<com.google.android.gms.maps.model.LatLng>? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //adicionar lista de pontos
+        testeLocais = ArrayList()
+        testeLocais!!.add(ponto1)
+        testeLocais!!.add(ponto2)
 
         toolbar = findViewById(R.id.myToolBar)
         setSupportActionBar(toolbar)
@@ -86,9 +99,11 @@ class MainActivity : AppCompatActivity() {
 
         //Inicializar o mapa
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(OnMapReadyCallback {
+        /*mapFragment.getMapAsync(OnMapReadyCallback {
             googleMap = it
-        })
+        })*/
+        //Troquei para aparecerem os pontos
+        mapFragment.getMapAsync(this)
 
         floatingButton = findViewById(R.id.btn_addProblem)
         txtInfo = findViewById(R.id.txt_risk)
@@ -160,5 +175,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+
+        for (i in testeLocais!!.indices){
+            googleMap.addMarker(MarkerOptions()
+                .position(testeLocais!![i])
+                .title("Marker"))
+            googleMap.animateCamera(CameraUpdateFactory.zoomTo(18.0f))
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(testeLocais!!.get(i)))
+        }
+
+        
+
+
     }
 }
