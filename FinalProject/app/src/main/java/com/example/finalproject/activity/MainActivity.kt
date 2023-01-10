@@ -3,6 +3,7 @@ package com.example.finalproject.activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -35,6 +36,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.type.LatLng
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -187,6 +190,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         for (i in testeLocais!!.indices){
 
+            val morada = getAdressName(testeLocais!![i].latitude,testeLocais!![i].longitude)
+
             if (i == 0){
                 val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.map_marker_fire,null)
                 val cardView = marker.findViewById<CardView>(R.id.markerFireIcon)
@@ -196,7 +201,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 googleMap.addMarker(MarkerOptions()
                     .position(testeLocais!![i])
                     .icon(smallMarkerIcon)
-                    .title("Marker"))
+                    .title("Morada:")
+                    .snippet(morada))
             }else{
                 val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.map_marker_work,null)
                 val cardView = marker.findViewById<CardView>(R.id.markerWorkIcon)
@@ -206,13 +212,23 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 googleMap.addMarker(MarkerOptions()
                     .position(testeLocais!![i])
                     .icon(smallMarkerIcon)
-                    .title("Marker"))
+                    .title("Morada:")
+                    .snippet(morada))
             }
 
             googleMap.animateCamera(CameraUpdateFactory.zoomTo(18.0f))
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(testeLocais!!.get(i)))
 
         }
+    }
+
+    private fun getAdressName(lat: Double, lon: Double): String{
+        var addressName = ""
+        var geoCoder = Geocoder(this, Locale.getDefault())
+        var address = geoCoder.getFromLocation(lat,lon,1)
+
+        addressName = address!!.get(0).getAddressLine(0)
+        return addressName
     }
 
     private fun viewToBitmap(view: View): Bitmap?{
