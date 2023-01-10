@@ -1,6 +1,8 @@
 package com.example.finalproject.activity
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +14,7 @@ import android.widget.SearchView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.finalproject.R
 import com.example.finalproject.activity.address.AddressActivity
@@ -25,6 +28,8 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -181,15 +186,43 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         googleMap = map
 
         for (i in testeLocais!!.indices){
-            googleMap.addMarker(MarkerOptions()
-                .position(testeLocais!![i])
-                .title("Marker"))
+
+            if (i == 0){
+                val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.map_marker_fire,null)
+                val cardView = marker.findViewById<CardView>(R.id.markerFireIcon)
+                val bitmap = Bitmap.createScaledBitmap(viewToBitmap(cardView)!!,cardView.width,cardView.height,false)
+                val smallMarkerIcon = BitmapDescriptorFactory.fromBitmap(bitmap)
+
+                googleMap.addMarker(MarkerOptions()
+                    .position(testeLocais!![i])
+                    .icon(smallMarkerIcon)
+                    .title("Marker"))
+            }else{
+                val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.map_marker_work,null)
+                val cardView = marker.findViewById<CardView>(R.id.markerWorkIcon)
+                val bitmap = Bitmap.createScaledBitmap(viewToBitmap(cardView)!!,cardView.width,cardView.height,false)
+                val smallMarkerIcon = BitmapDescriptorFactory.fromBitmap(bitmap)
+
+                googleMap.addMarker(MarkerOptions()
+                    .position(testeLocais!![i])
+                    .icon(smallMarkerIcon)
+                    .title("Marker"))
+            }
+
             googleMap.animateCamera(CameraUpdateFactory.zoomTo(18.0f))
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(testeLocais!!.get(i)))
+
         }
-
-        
-
-
     }
+
+    private fun viewToBitmap(view: View): Bitmap?{
+        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+        val bitmap = Bitmap.createBitmap(view.measuredWidth,view.measuredHeight,Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        view.layout(0,0,view.measuredWidth,view.measuredHeight)
+        view.draw(canvas)
+        return bitmap
+    }
+
+
 }
