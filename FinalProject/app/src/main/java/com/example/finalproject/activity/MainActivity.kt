@@ -1,10 +1,13 @@
 package com.example.finalproject.activity
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.location.Address
 import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,8 +18,10 @@ import android.widget.LinearLayout
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.finalproject.CustomInfoWindowAdapter
 import com.example.finalproject.R
@@ -27,11 +32,14 @@ import com.example.finalproject.activity.usercontrol.SettingsActivity
 import com.example.finalproject.weather.APIData
 import com.example.finalproject.weather.Formulas
 import com.example.finalproject.weather.Model
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -48,6 +56,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var googleMap: GoogleMap
     lateinit var floatingButton: FloatingActionButton
     lateinit var txtInfo: TextView
+
+    //Variaveis para a localização do utilizador
+    private lateinit var lastLocation:Location
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    companion object{
+        private const val LOCATION_REQUEST_CODE = 1
+    }
+
+    //Variaveis do teste do alarme de incendio
+    private lateinit var dialogFire: AlertDialog
 
     //Variaveis de teste dos pontos no mapa
     val ponto1 = com.google.android.gms.maps.model.LatLng(38.589607, -9.154542)
@@ -67,7 +85,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val testeMoradaEscrita = getAddressCoordenates("Rua Serra de Nisa 4")
         val testeEscrita = testeMoradaEscrita.latitude.toString() + "," + testeMoradaEscrita.longitude.toString()
 
-        testeLocais!!.add(testeMoradaEscrita)
+        //testeLocais!!.add(testeMoradaEscrita)
         //Fim do Teste
 
         toolbar = findViewById(R.id.myToolBar)
@@ -119,7 +137,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         })*/
         //Troquei para aparecerem os pontos
         mapFragment.getMapAsync(this)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
+        //Codigo do botão de adicionar ocurrencias
         floatingButton = findViewById(R.id.btn_addProblem)
         txtInfo = findViewById(R.id.txt_risk)
         floatingButton.setOnClickListener {
@@ -195,6 +215,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
 
+        //Localização do utilizador
+        googleMap.uiSettings.isZoomControlsEnabled = true
+
+        setUpMap()
+
+        //Código para adicionar os pontos
         for (i in testeLocais!!.indices){
 
             val morada = getAddressName(testeLocais!![i].latitude,testeLocais!![i].longitude)
@@ -223,12 +249,39 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     .snippet(morada))
             }
 
-            googleMap.animateCamera(CameraUpdateFactory.zoomTo(18.0f))
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(testeLocais!!.get(i)))
+            //googleMap.animateCamera(CameraUpdateFactory.zoomTo(18.0f))
+            //googleMap.moveCamera(CameraUpdateFactory.newLatLng(testeLocais!!.get(i)))
 
             googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
 
         }
+    }
+
+    private fun setUpMap(){
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_REQUEST_CODE)
+
+            return
+        }
+        googleMap.isMyLocationEnabled = true
+        fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
+
+            if(location != null){
+                lastLocation = location
+                val currentLatLong = LatLng(location.latitude, location.longitude)
+                placeMarkerLocation(currentLatLong)
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 18f))
+            }
+        }
+    }
+
+    private fun placeMarkerLocation(currentLatLong: LatLng){
+        val markerOptions = MarkerOptions().position(currentLatLong)
+        markerOptions.title("Estou Aqui")
+        googleMap.addMarker(markerOptions)
     }
 
     //Função permite obter o morada através de coordenadas
@@ -261,4 +314,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         return bitmap
     }
 
+    //Código teste alarme Incendio perto
+    private fun showDialogNormal(){
+        val build = AlertDialog.Builder(this)
+        val view = layoutInflater.inflate(R.layout.customdialogfirealarm,null)
+
+        build.setView(view)
+
+        dialogFire = build.create()
+        dialogFire.show()
+
+    }
 }
