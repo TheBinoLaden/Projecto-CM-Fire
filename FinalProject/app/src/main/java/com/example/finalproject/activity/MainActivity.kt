@@ -8,6 +8,8 @@ import android.graphics.Canvas
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -59,7 +61,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     //Variaveis para a localização do utilizador
     private lateinit var lastLocation:Location
+    var testePosisao = LatLng(0.0,0.0)
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
     companion object{
         private const val LOCATION_REQUEST_CODE = 1
     }
@@ -68,9 +72,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var dialogFire: AlertDialog
 
     //Variaveis de teste dos pontos no mapa
-    val ponto1 = com.google.android.gms.maps.model.LatLng(38.589607, -9.154542)
-    val ponto2 = com.google.android.gms.maps.model.LatLng(38.589846, -9.154051)
-    private var testeLocais: ArrayList<com.google.android.gms.maps.model.LatLng>? = null
+    val ponto1 = LatLng(38.589607, -9.154542)
+    val ponto2 = LatLng(38.589846, -9.154051)
+    private var testeLocais: ArrayList<LatLng>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -223,6 +227,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         //Código para adicionar os pontos
         for (i in testeLocais!!.indices){
 
+            Log.d("tag","2")
             val morada = getAddressName(testeLocais!![i].latitude,testeLocais!![i].longitude)
 
             if (i == 0){
@@ -248,30 +253,28 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     .title("Definição")
                     .snippet(morada))
             }
-
-            //googleMap.animateCamera(CameraUpdateFactory.zoomTo(18.0f))
-            //googleMap.moveCamera(CameraUpdateFactory.newLatLng(testeLocais!!.get(i)))
-
+            calculateDistance(testeLocais!![i])
             googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
 
         }
+        Log.d("tag","3")
     }
 
     private fun setUpMap(){
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
-
+        Log.d("tag","1")
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_REQUEST_CODE)
+        }else{
 
-            return
         }
         googleMap.isMyLocationEnabled = true
         fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
 
             if(location != null){
+                Log.d("tag","5")
                 lastLocation = location
                 val currentLatLong = LatLng(location.latitude, location.longitude)
+                testePosisao = currentLatLong
                 placeMarkerLocation(currentLatLong)
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 18f))
             }
@@ -291,7 +294,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         //val address = addressList!![0].getAddressLine(0)
         val address = addressList!![0].getAddressLine(0) + "\n Para mais informações, clique"
-        Log.d("tag",address)
         return address
     }
 
@@ -301,7 +303,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val cAddress = geoCoder.getFromLocationName(address,1)
 
         val location: Address = cAddress!!.get(0)
-        val d = com.google.android.gms.maps.model.LatLng(location.latitude, location.longitude)
+        val d = LatLng(location.latitude, location.longitude)
         return d
     }
 
@@ -323,6 +325,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         dialogFire = build.create()
         dialogFire.show()
+    }
+
+    //Código para calcular distancia
+    private fun calculateDistance(pointLocation: LatLng){
+        for(i in testeLocais!!.indices){
+
+        }
+        //val results = FloatArray(3)
+        //val teste = LatLng(lastLocation.latitude,lastLocation.longitude)
+        //Location.distanceBetween(teste.latitude,teste.longitude,pointLocation.latitude,pointLocation.longitude,results)
+        //Log.d("tag",teste.latitude.toString() + "," + teste.longitude.toString())
+        //Log.d("tag",results[0].toString())
+        //Log.d("tag",(results[0]*0.001).toString() + "km")
 
     }
 }
