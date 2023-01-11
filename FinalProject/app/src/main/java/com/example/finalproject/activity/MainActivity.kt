@@ -1,6 +1,7 @@
 package com.example.finalproject.activity
 
 import android.Manifest
+import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -10,6 +11,7 @@ import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,11 +21,13 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.SearchView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
+import androidx.core.content.getSystemService
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.finalproject.CustomInfoWindowAdapter
 import com.example.finalproject.R
@@ -46,6 +50,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import io.grpc.Context
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -63,7 +68,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var lastLocation:Location
     var testePosisao = LatLng(0.0,0.0)
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-
     companion object{
         private const val LOCATION_REQUEST_CODE = 1
     }
@@ -76,6 +80,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     val ponto2 = LatLng(38.589846, -9.154051)
     private var testeLocais: ArrayList<LatLng>? = null
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -136,10 +141,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         //Inicializar o mapa
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        /*mapFragment.getMapAsync(OnMapReadyCallback {
-            googleMap = it
-        })*/
-        //Troquei para aparecerem os pontos
         mapFragment.getMapAsync(this)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -227,7 +228,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         //Código para adicionar os pontos
         for (i in testeLocais!!.indices){
 
-            Log.d("tag","2")
             val morada = getAddressName(testeLocais!![i].latitude,testeLocais!![i].longitude)
 
             if (i == 0){
@@ -253,32 +253,28 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     .title("Definição")
                     .snippet(morada))
             }
-            calculateDistance(testeLocais!![i])
+            //calculateDistance(testeLocais!![i])
             googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
 
         }
-        Log.d("tag","3")
     }
 
     private fun setUpMap(){
-        Log.d("tag","1")
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_REQUEST_CODE)
-        }else{
-
         }
         googleMap.isMyLocationEnabled = true
         fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
-
             if(location != null){
-                Log.d("tag","5")
                 lastLocation = location
                 val currentLatLong = LatLng(location.latitude, location.longitude)
                 testePosisao = currentLatLong
                 placeMarkerLocation(currentLatLong)
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 18f))
             }
+            checkFire()
         }
+
     }
 
     private fun placeMarkerLocation(currentLatLong: LatLng){
@@ -329,15 +325,27 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     //Código para calcular distancia
     private fun calculateDistance(pointLocation: LatLng){
-        for(i in testeLocais!!.indices){
 
+        val results = FloatArray(3)
+        Location.distanceBetween(testePosisao.latitude,testePosisao.longitude,pointLocation.latitude,pointLocation.longitude,results)
+
+        val final = results[0]/1000
+
+        if(final < 5){
+            showDialogNormal()
         }
-        //val results = FloatArray(3)
-        //val teste = LatLng(lastLocation.latitude,lastLocation.longitude)
-        //Location.distanceBetween(teste.latitude,teste.longitude,pointLocation.latitude,pointLocation.longitude,results)
-        //Log.d("tag",teste.latitude.toString() + "," + teste.longitude.toString())
-        //Log.d("tag",results[0].toString())
         //Log.d("tag",(results[0]*0.001).toString() + "km")
+        //Log.d("tag",String.format("%.1f",results[0]/1000) + "km")
+
+    }
+
+    private fun checkFire(){
+        
+        for (i in testeLocais!!.indices){
+            if(i==0){
+                calculateDistance(testeLocais!![i])
+            }
+        }
 
     }
 }
