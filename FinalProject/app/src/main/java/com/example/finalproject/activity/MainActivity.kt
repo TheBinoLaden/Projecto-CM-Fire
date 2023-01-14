@@ -1,7 +1,6 @@
 package com.example.finalproject.activity
 
 import android.Manifest
-import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -9,8 +8,6 @@ import android.graphics.Canvas
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -27,9 +24,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
-import androidx.core.content.getSystemService
 import androidx.drawerlayout.widget.DrawerLayout
-import com.example.finalproject.CustomInfoWindowAdapter
 import com.example.finalproject.R
 import com.example.finalproject.activity.address.AddressActivity
 import com.example.finalproject.activity.occurrence.ListNewOccurrenceActivity
@@ -50,7 +45,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
-import io.grpc.Context
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -253,9 +247,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     .title("Definição")
                     .snippet(morada))
             }
-            //calculateDistance(testeLocais!![i])
-            googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
 
+            googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
         }
     }
 
@@ -272,7 +265,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 placeMarkerLocation(currentLatLong)
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 18f))
             }
-            checkFire()
+            //checkFire()
         }
 
     }
@@ -334,13 +327,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         if(final < 5){
             showDialogNormal()
         }
-        //Log.d("tag",(results[0]*0.001).toString() + "km")
         //Log.d("tag",String.format("%.1f",results[0]/1000) + "km")
 
     }
 
     private fun checkFire(){
-        
+
         for (i in testeLocais!!.indices){
             if(i==0){
                 calculateDistance(testeLocais!![i])

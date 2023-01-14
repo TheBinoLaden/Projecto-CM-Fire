@@ -1,9 +1,9 @@
-package com.example.finalproject
+package com.example.finalproject.activity
 
 import android.app.Activity
 import android.view.View
 import android.widget.TextView
-import com.example.finalproject.activity.MainActivity
+import com.example.finalproject.R
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
 
