@@ -7,6 +7,7 @@ enum class Tags {
     DONE,
     LOGIN,
     RESULT,
-    ERROR
+    ERROR,
+    SUCCESS
 
 }

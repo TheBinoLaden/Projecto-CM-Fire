@@ -1,7 +1,6 @@
 package com.example.finalproject.activity
 
 import android.Manifest
-import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -9,8 +8,6 @@ import android.graphics.Canvas
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -27,7 +24,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
-import androidx.core.content.getSystemService
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.finalproject.CustomInfoWindowAdapter
 import com.example.finalproject.R
@@ -50,9 +46,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
-import io.grpc.Context
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -65,10 +59,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var txtInfo: TextView
 
     //Variaveis para a localização do utilizador
-    private lateinit var lastLocation:Location
-    var testePosisao = LatLng(0.0,0.0)
+    private lateinit var lastLocation: Location
+    var testePosisao = LatLng(0.0, 0.0)
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    companion object{
+
+    companion object {
         private const val LOCATION_REQUEST_CODE = 1
     }
 
@@ -92,7 +87,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         //Teste da Morada Escrita
         val testeMoradaEscrita = getAddressCoordenates("Rua Serra de Nisa 4")
-        val testeEscrita = testeMoradaEscrita.latitude.toString() + "," + testeMoradaEscrita.longitude.toString()
+        val testeEscrita =
+            testeMoradaEscrita.latitude.toString() + "," + testeMoradaEscrita.longitude.toString()
 
         //testeLocais!!.add(testeMoradaEscrita)
         //Fim do Teste
@@ -226,32 +222,52 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         setUpMap()
 
         //Código para adicionar os pontos
-        for (i in testeLocais!!.indices){
+        for (i in testeLocais!!.indices) {
 
-            val morada = getAddressName(testeLocais!![i].latitude,testeLocais!![i].longitude)
+            val morada = getAddressName(testeLocais!![i].latitude, testeLocais!![i].longitude)
 
-            if (i == 0){
-                val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.map_marker_fire,null)
+            if (i == 0) {
+                val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(
+                    R.layout.map_marker_fire,
+                    null
+                )
                 val cardView = marker.findViewById<CardView>(R.id.markerFireIcon)
-                val bitmap = Bitmap.createScaledBitmap(viewToBitmap(cardView)!!,cardView.width,cardView.height,false)
+                val bitmap = Bitmap.createScaledBitmap(
+                    viewToBitmap(cardView)!!,
+                    cardView.width,
+                    cardView.height,
+                    false
+                )
                 val smallMarkerIcon = BitmapDescriptorFactory.fromBitmap(bitmap)
 
-                googleMap.addMarker(MarkerOptions()
-                    .position(testeLocais!![i])
-                    .icon(smallMarkerIcon)
-                    .title("Definição")
-                    .snippet(morada))
-            }else{
-                val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.map_marker_work,null)
+                googleMap.addMarker(
+                    MarkerOptions()
+                        .position(testeLocais!![i])
+                        .icon(smallMarkerIcon)
+                        .title("Definição")
+                        .snippet(morada)
+                )
+            } else {
+                val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(
+                    R.layout.map_marker_work,
+                    null
+                )
                 val cardView = marker.findViewById<CardView>(R.id.markerWorkIcon)
-                val bitmap = Bitmap.createScaledBitmap(viewToBitmap(cardView)!!,cardView.width,cardView.height,false)
+                val bitmap = Bitmap.createScaledBitmap(
+                    viewToBitmap(cardView)!!,
+                    cardView.width,
+                    cardView.height,
+                    false
+                )
                 val smallMarkerIcon = BitmapDescriptorFactory.fromBitmap(bitmap)
 
-                googleMap.addMarker(MarkerOptions()
-                    .position(testeLocais!![i])
-                    .icon(smallMarkerIcon)
-                    .title("Definição")
-                    .snippet(morada))
+                googleMap.addMarker(
+                    MarkerOptions()
+                        .position(testeLocais!![i])
+                        .icon(smallMarkerIcon)
+                        .title("Definição")
+                        .snippet(morada)
+                )
             }
             //calculateDistance(testeLocais!![i])
             googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
@@ -259,13 +275,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun setUpMap(){
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_REQUEST_CODE)
+    private fun setUpMap() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_REQUEST_CODE
+            )
         }
         googleMap.isMyLocationEnabled = true
         fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
-            if(location != null){
+            if (location != null) {
                 lastLocation = location
                 val currentLatLong = LatLng(location.latitude, location.longitude)
                 testePosisao = currentLatLong
@@ -277,16 +301,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
-    private fun placeMarkerLocation(currentLatLong: LatLng){
+    private fun placeMarkerLocation(currentLatLong: LatLng) {
         val markerOptions = MarkerOptions().position(currentLatLong)
         markerOptions.title("Estou Aqui")
         googleMap.addMarker(markerOptions)
     }
 
     //Função permite obter o morada através de coordenadas
-    private fun getAddressName(lat: Double, lon: Double): String{
+    private fun getAddressName(lat: Double, lon: Double): String {
         val geoCoder = Geocoder(this, Locale.getDefault())
-        val addressList = geoCoder.getFromLocation(lat,lon,1)
+        val addressList = geoCoder.getFromLocation(lat, lon, 1)
 
         //val address = addressList!![0].getAddressLine(0)
         val address = addressList!![0].getAddressLine(0) + "\n Para mais informações, clique"
@@ -294,28 +318,29 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     //Função permite obter coordenadas através de morada
-    private fun getAddressCoordenates(address: String):com.google.android.gms.maps.model.LatLng{
+    private fun getAddressCoordenates(address: String): com.google.android.gms.maps.model.LatLng {
         val geoCoder = Geocoder(this, Locale.getDefault())
-        val cAddress = geoCoder.getFromLocationName(address,1)
+        val cAddress = geoCoder.getFromLocationName(address, 1)
 
         val location: Address = cAddress!!.get(0)
         val d = LatLng(location.latitude, location.longitude)
         return d
     }
 
-    private fun viewToBitmap(view: View): Bitmap?{
+    private fun viewToBitmap(view: View): Bitmap? {
         view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
-        val bitmap = Bitmap.createBitmap(view.measuredWidth,view.measuredHeight,Bitmap.Config.ARGB_8888)
+        val bitmap =
+            Bitmap.createBitmap(view.measuredWidth, view.measuredHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
-        view.layout(0,0,view.measuredWidth,view.measuredHeight)
+        view.layout(0, 0, view.measuredWidth, view.measuredHeight)
         view.draw(canvas)
         return bitmap
     }
 
     //Código teste alarme Incendio perto
-    private fun showDialogNormal(){
+    private fun showDialogNormal() {
         val build = AlertDialog.Builder(this)
-        val view = layoutInflater.inflate(R.layout.customdialogfirealarm,null)
+        val view = layoutInflater.inflate(R.layout.customdialogfirealarm, null)
 
         build.setView(view)
 
@@ -324,14 +349,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     //Código para calcular distancia
-    private fun calculateDistance(pointLocation: LatLng){
+    private fun calculateDistance(pointLocation: LatLng) {
 
         val results = FloatArray(3)
-        Location.distanceBetween(testePosisao.latitude,testePosisao.longitude,pointLocation.latitude,pointLocation.longitude,results)
+        Location.distanceBetween(
+            testePosisao.latitude,
+            testePosisao.longitude,
+            pointLocation.latitude,
+            pointLocation.longitude,
+            results
+        )
 
-        val final = results[0]/1000
+        val final = results[0] / 1000
 
-        if(final < 5){
+        if (final < 5) {
             showDialogNormal()
         }
         //Log.d("tag",(results[0]*0.001).toString() + "km")
@@ -339,10 +370,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
-    private fun checkFire(){
-        
-        for (i in testeLocais!!.indices){
-            if(i==0){
+    private fun checkFire() {
+
+        for (i in testeLocais!!.indices) {
+            if (i == 0) {
                 calculateDistance(testeLocais!![i])
             }
         }
