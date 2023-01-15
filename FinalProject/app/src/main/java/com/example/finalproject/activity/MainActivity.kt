@@ -634,6 +634,7 @@ private fun makeStringFromDatabase(document: QueryDocumentSnapshot): String {
     sb.append("coordinates: " + document.get("coordinates"))
     sb.append("description: " + document.get("description"))
     sb.append("title: " + document.get("title"))
+    sb.append("type: " + document.get("type"))
 
     return sb.toString()
 }
