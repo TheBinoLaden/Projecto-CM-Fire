@@ -7,7 +7,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/fundo"
-    tools:context=".activity.usercontrol.LoginActivity">
+    tools:context=".activity.usercontrol.LoginActivity"
+    android:id="@+id/LoginCard"
+    >
 
     <androidx.cardview.widget.CardView
         app:cardCornerRadius="25dp"

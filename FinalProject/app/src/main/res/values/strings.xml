@@ -16,4 +16,8 @@
     <string name="facebook">facebook</string>
     <string name="verificado">Verificado</string>
     <string name="novas_ocorrencias">Novas Ocorrências</string>
+    <string name="permission_rationale">Localização é necessária para a app funcionar</string>
+    <string name="permission_denied_explanation">Permissão negada. Necessária para o funcionamento correto.</string>
+    <string name="settings">Settings</string>
+    <string name="ok">OK</string>
 </resources>
