@@ -1,6 +1,7 @@
 package com.example.finalproject.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -10,6 +11,7 @@ import android.location.Geocoder
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -24,6 +26,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.finalproject.CustomInfoWindowAdapter
 import com.example.finalproject.R
@@ -31,11 +34,11 @@ import com.example.finalproject.activity.address.AddressActivity
 import com.example.finalproject.activity.occurrence.ListNewOccurrenceActivity
 import com.example.finalproject.activity.occurrence.OccurrenceActivity
 import com.example.finalproject.activity.usercontrol.SettingsActivity
+import com.example.finalproject.enums.Tags
 import com.example.finalproject.weather.APIData
 import com.example.finalproject.weather.Formulas
 import com.example.finalproject.weather.Model
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -59,12 +62,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var txtInfo: TextView
 
     //Variaveis para a localização do utilizador
-    private lateinit var lastLocation: Location
-    var testePosisao = LatLng(0.0, 0.0)
+    private var lastLocation: Location? = null
+    var testePosicao = LatLng(0.0, 0.0)
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var locationGranted = false
+    lateinit var locationRequest: LocationRequest
+    lateinit var locationCallback: LocationCallback
 
     companion object {
         private const val LOCATION_REQUEST_CODE = 1
+        private const val DEFAULT_ZOOM = 15
     }
 
     //Variaveis do teste do alarme de incendio
@@ -74,6 +81,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     val ponto1 = LatLng(38.589607, -9.154542)
     val ponto2 = LatLng(38.589846, -9.154051)
     private var testeLocais: ArrayList<LatLng>? = null
+    private val defaultLocation = LatLng(-33.8523341, 151.2106085)
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,6 +148,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
+
         //Codigo do botão de adicionar ocurrencias
         floatingButton = findViewById(R.id.btn_addProblem)
         txtInfo = findViewById(R.id.txt_risk)
@@ -180,6 +189,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
@@ -273,9 +283,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
 
         }
+
+        updateLocationUI()
+
+        getDeviceLocation()
     }
 
     private fun setUpMap() {
+
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -287,17 +302,46 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 LOCATION_REQUEST_CODE
             )
         }
-        googleMap.isMyLocationEnabled = true
-        fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
-            if (location != null) {
-                lastLocation = location
-                val currentLatLong = LatLng(location.latitude, location.longitude)
-                testePosisao = currentLatLong
-                placeMarkerLocation(currentLatLong)
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 18f))
+
+        setLocationFetchSettings()
+
+
+        // Este callback permite apanhar as alteracoes de localizacao
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+                lastLocation = locationResult.lastLocation
+                if (locationResult.locations.size != 0
+                    && (locationResult.locations[locationResult.locations.size - 1] != lastLocation || locationResult.locations.size == 1)
+                ) {
+                    Log.d(Tags.COORDINATES.name, lastLocation?.latitude.toString())
+                    Log.d(Tags.COORDINATES.name, lastLocation?.longitude.toString())
+                    Log.d(Tags.COORDINATES.name, lastLocation?.accuracy.toString())
+
+                    val currentLatLong =
+                        lastLocation?.let { LatLng(it.latitude, lastLocation!!.longitude) }
+
+                    if (currentLatLong != null) {
+                        googleMap.clear()
+                        placeMarkerLocation(currentLatLong)
+                        googleMap.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                currentLatLong,
+                                18F
+                            )
+                        )
+                    }
+                }
             }
-            checkFire()
         }
+
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+
+        checkFire()
 
     }
 
@@ -353,8 +397,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val results = FloatArray(3)
         Location.distanceBetween(
-            testePosisao.latitude,
-            testePosisao.longitude,
+            testePosicao.latitude,
+            testePosicao.longitude,
             pointLocation.latitude,
             pointLocation.longitude,
             results
@@ -379,4 +423,82 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
     }
+
+    private fun updateLocationUI() {
+        try {
+            if (locationGranted) {
+                googleMap.isMyLocationEnabled = true
+                googleMap.uiSettings.isMyLocationButtonEnabled = true
+            } else {
+                googleMap.isMyLocationEnabled = false
+                googleMap.uiSettings.isMyLocationButtonEnabled = false
+                lastLocation = null
+                getLocationPermission()
+            }
+        } catch (e: SecurityException) {
+            Log.e("Exception: %s", e.message, e)
+        }
+    }
+
+    // Double check against the permission
+    private fun getLocationPermission() {
+        /*
+         * Request location permission, so that we can get the location of the
+         * device. The result of the permission request is handled by a callback,
+         * onRequestPermissionsResult.
+         */
+        if (ContextCompat.checkSelfPermission(
+                this.applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            locationGranted = true
+        } else {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                34
+            )
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getDeviceLocation() {
+        try {
+            if (locationGranted) {
+                val locationResult = fusedLocationClient.lastLocation
+                locationResult.addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        // Set the map's camera position to the current location of the device.
+                        lastLocation = task.result
+                        if (lastLocation != null) {
+                            // private val defaultLocation = LatLng(-33.8523341, 151.2106085)
+                            googleMap.moveCamera(
+                                CameraUpdateFactory.newLatLngZoom(
+                                    LatLng(
+                                        lastLocation!!.latitude,
+                                        lastLocation!!.longitude
+                                    ), DEFAULT_ZOOM.toFloat()
+                                )
+                            )
+                        }
+                    } else {
+                        googleMap.moveCamera(
+                            CameraUpdateFactory
+                                .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat())
+                        )
+                        googleMap.uiSettings.isMyLocationButtonEnabled = false
+                    }
+                }
+            }
+        } catch (e: SecurityException) {
+            Log.e("Exception: %s", e.message, e)
+        }
+    }
+
+    private fun setLocationFetchSettings() {
+        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
+    }
+
+
 }
