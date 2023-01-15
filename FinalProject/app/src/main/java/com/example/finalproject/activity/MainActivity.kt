@@ -3,6 +3,8 @@ package com.example.finalproject.activity
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -280,7 +282,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 18f))
             }
             //checkFire()
-            checkWork("Teste","Notificação teste com passagem de parametros", R.drawable.fireicon)
+            //checkWork("Teste","Notificação teste com passagem de parametros", R.drawable.fireicon)
         }
 
     }
@@ -376,11 +378,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun createNotification(title: String, information: String, icon: Int){
+        val intent = Intent(this,MainActivity::class.java)
+        val pendingIntent = TaskStackBuilder.create(this).run {
+            addNextIntentWithParentStack(intent)
+            getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+
         val notification = NotificationCompat.Builder(this,CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(information)
             .setSmallIcon(icon)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
             .build()
 
         val notificationManager = NotificationManagerCompat.from(this)
