@@ -8,6 +8,7 @@ enum class Tags {
     LOGIN,
     RESULT,
     ERROR,
-    SUCCESS
+    SUCCESS,
+    COORDINATES
 
 }
