@@ -1,10 +1,13 @@
 package com.example.finalproject.activity
 
 import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
@@ -25,6 +28,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.finalproject.R
 import com.example.finalproject.activity.address.AddressActivity
@@ -46,6 +51,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import io.grpc.Context
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -59,6 +65,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var floatingButton: FloatingActionButton
     lateinit var txtInfo: TextView
     private lateinit var timerAlert: CountDownTimer
+
+    //Variaveis para teste de notificacao
+    val CHANNEL_ID = "channelID"
+    val CHANNEL_NAME = "channelName"
+    val NOTIFICATIO_ID = 0
 
     //Variaveis para a localização do utilizador
     private lateinit var lastLocation:Location
@@ -267,7 +278,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 placeMarkerLocation(currentLatLong)
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 18f))
             }
-            checkFire()
+            //checkFire()
+            checkWork()
         }
 
     }
@@ -355,6 +367,35 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 calculateDistance(testeLocais!![i])
             }
         }
+    }
 
+    private fun checkWork(){
+        createNotificationChannel()
+        createNotification()
+    }
+
+    private fun createNotification(){
+        val notification = NotificationCompat.Builder(this,CHANNEL_ID)
+            .setContentTitle("Teste")
+            .setContentText("Este é um teste para ver se é gerado uma notificação")
+            .setSmallIcon(R.drawable.workicon)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .build()
+
+        val notificationManager = NotificationManagerCompat.from(this)
+
+        notificationManager.notify(NOTIFICATIO_ID, notification)
+    }
+
+    private fun createNotificationChannel(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME,NotificationManager.IMPORTANCE_DEFAULT).apply {
+                lightColor = Color.GREEN
+                enableLights(true)
+            }
+
+            val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(channel)
+        }
     }
 }
