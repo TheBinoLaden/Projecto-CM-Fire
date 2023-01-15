@@ -390,8 +390,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         checkWork("Teste", "Notificação teste com passagem de parametros", R.drawable.fireicon)
     }
 
-
-
 private fun placeMarkerLocation(currentLatLong: LatLng) {
     val markerOptions = MarkerOptions().position(currentLatLong)
     markerOptions.title("Estou Aqui")
