@@ -1,6 +1,7 @@
 package com.example.finalproject.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -282,7 +283,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 18f))
             }
             //checkFire()
-            //checkWork("Teste","Notificação teste com passagem de parametros", R.drawable.fireicon)
+            checkWork("Teste","Notificação teste com passagem de parametros", R.drawable.fireicon)
         }
 
     }
@@ -377,11 +378,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         createNotification(title, information, icon)
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     private fun createNotification(title: String, information: String, icon: Int){
         val intent = Intent(this,MainActivity::class.java)
-        val pendingIntent = TaskStackBuilder.create(this).run {
-            addNextIntentWithParentStack(intent)
-            getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT)
+        var pendingIntent: PendingIntent? = null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            pendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_MUTABLE)
+        }else{
+            pendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_ONE_SHOT)
         }
 
         val notification = NotificationCompat.Builder(this,CHANNEL_ID)
