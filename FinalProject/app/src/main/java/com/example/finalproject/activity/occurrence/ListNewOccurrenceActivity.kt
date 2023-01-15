@@ -37,7 +37,7 @@ import com.example.finalproject.R
 import com.example.finalproject.activity.MainActivity
 import com.example.finalproject.activity.address.AddressActivity
 import com.example.finalproject.activity.usercontrol.SettingsActivity
-import com.example.finalproject.firebase.utils.OccurrencesUtils
+import com.example.finalproject.utils.OccurrencesUtils
 import com.google.android.material.navigation.NavigationView
 
 

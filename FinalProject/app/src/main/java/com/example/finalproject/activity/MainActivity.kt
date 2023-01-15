@@ -42,6 +42,7 @@ import com.example.finalproject.activity.occurrence.ListNewOccurrenceActivity
 import com.example.finalproject.activity.occurrence.OccurrenceActivity
 import com.example.finalproject.activity.usercontrol.SettingsActivity
 import com.example.finalproject.enums.Tags
+import com.example.finalproject.utils.StringUtils
 import com.example.finalproject.weather.APIData
 import com.example.finalproject.weather.Formulas
 import com.example.finalproject.weather.Model
@@ -621,7 +622,7 @@ private fun addListenerOfDatabase() {
         querySnapshot?.let {
             for (document in it) {
                 val convertedString = makeStringFromDatabase(document)
-                Toast.makeText(this,convertedString , Toast.LENGTH_LONG).show()
+                Toast.makeText(this,"New Update of Occurrences." , Toast.LENGTH_LONG).show()
                 storeOccurrences?.add(convertedString)
             }
         }
@@ -630,11 +631,11 @@ private fun addListenerOfDatabase() {
 
 private fun makeStringFromDatabase(document: QueryDocumentSnapshot): String {
     val sb = StringBuilder()
-    sb.append("date: " + document.get("date"))
-    sb.append("coordinates: " + document.get("coordinates"))
-    sb.append("description: " + document.get("description"))
-    sb.append("title: " + document.get("title"))
-    sb.append("type: " + document.get("type"))
+    sb.append("date:" + document.get("date") + "|")
+    sb.append("coordinates:" + document.get("coordinates") + "|")
+    sb.append("description:" + document.get("description") + "|")
+    sb.append("title:" + document.get("title") + "|")
+    sb.append("type:" + document.get("type"))
 
     return sb.toString()
 }

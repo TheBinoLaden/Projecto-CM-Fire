@@ -1,4 +1,4 @@
-package com.example.finalproject.firebase.utils
+package com.example.finalproject.utils
 
 import android.widget.ArrayAdapter
 import android.widget.ListView

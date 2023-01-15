@@ -21,7 +21,7 @@ import com.example.finalproject.R
 import com.example.finalproject.activity.MainActivity
 import com.example.finalproject.enums.Tags
 import com.example.finalproject.firebase.dao.LoginDao
-import com.example.finalproject.firebase.utils.UserUtils
+import com.example.finalproject.utils.UserUtils
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import android.view.inputmethod.InputMethodManager

@@ -1,4 +1,4 @@
-package com.example.finalproject.firebase.utils
+package com.example.finalproject.utils
 
 import com.example.finalproject.firebase.dao.AddressDao
 
