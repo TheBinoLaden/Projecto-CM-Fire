@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     companion object {
         private const val LOCATION_REQUEST_CODE = 1
-        private const val DEFAULT_ZOOM = 15
+        private const val ZOOM = 18F
     }
 
     //Variaveis do teste do alarme de incendio
@@ -81,7 +81,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     val ponto1 = LatLng(38.589607, -9.154542)
     val ponto2 = LatLng(38.589846, -9.154051)
     private var testeLocais: ArrayList<LatLng>? = null
-    private val defaultLocation = LatLng(-33.8523341, 151.2106085)
+
+    // FCUL is the defaultLocation
+    private val defaultLocation = LatLng(38.75648904803744, -9.155400218408356)
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -229,6 +231,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         //Localização do utilizador
         googleMap.uiSettings.isZoomControlsEnabled = true
 
+        // Updates the UI location settings
+        updateLocationUI()
+
+        // Gets the first location of the device
+        getFirstDeviceLocation()
+
         setUpMap()
 
         //Código para adicionar os pontos
@@ -284,9 +292,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         }
 
-        updateLocationUI()
-
-        getDeviceLocation()
     }
 
     private fun setUpMap() {
@@ -326,8 +331,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         placeMarkerLocation(currentLatLong)
                         googleMap.animateCamera(
                             CameraUpdateFactory.newLatLngZoom(
-                                currentLatLong,
-                                18F
+                                currentLatLong, ZOOM
                             )
                         )
                     }
@@ -442,11 +446,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     // Double check against the permission
     private fun getLocationPermission() {
-        /*
-         * Request location permission, so that we can get the location of the
-         * device. The result of the permission request is handled by a callback,
-         * onRequestPermissionsResult.
-         */
         if (ContextCompat.checkSelfPermission(
                 this.applicationContext,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -463,7 +462,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     @SuppressLint("MissingPermission")
-    private fun getDeviceLocation() {
+    private fun getFirstDeviceLocation() {
         try {
             if (locationGranted) {
                 val locationResult = fusedLocationClient.lastLocation
@@ -478,21 +477,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                     LatLng(
                                         lastLocation!!.latitude,
                                         lastLocation!!.longitude
-                                    ), DEFAULT_ZOOM.toFloat()
+                                    ), ZOOM.toFloat()
                                 )
                             )
                         }
                     } else {
                         googleMap.moveCamera(
-                            CameraUpdateFactory
-                                .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat())
+                            CameraUpdateFactory.newLatLngZoom(defaultLocation, ZOOM.toFloat())
                         )
                         googleMap.uiSettings.isMyLocationButtonEnabled = false
                     }
                 }
             }
         } catch (e: SecurityException) {
-            Log.e("Exception: %s", e.message, e)
+            Log.e("Security Exception: %s", e.message, e)
         }
     }
 
