@@ -10,6 +10,7 @@ import android.location.Geocoder
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -57,6 +58,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var googleMap: GoogleMap
     lateinit var floatingButton: FloatingActionButton
     lateinit var txtInfo: TextView
+    private lateinit var timerAlert: CountDownTimer
 
     //Variaveis para a localização do utilizador
     private lateinit var lastLocation:Location
@@ -316,6 +318,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         dialogFire = build.create()
         dialogFire.setCanceledOnTouchOutside(false)
         dialogFire.show()
+
+        //Testar contador
+        timerAlert = object : CountDownTimer(3_000,1_000){
+            override fun onTick(remain: Long) {
+                Log.d("tag",remain.toString())
+            }
+
+            override fun onFinish() {
+                dialogFire.cancel()
+            }
+
+        }
+        timerAlert.start()
     }
 
     //Código para calcular distancia
