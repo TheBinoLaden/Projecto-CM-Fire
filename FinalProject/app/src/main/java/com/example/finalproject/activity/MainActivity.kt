@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     val ponto1 = LatLng(38.589607, -9.154542)
     val ponto2 = LatLng(38.589846, -9.154051)
     private var testeLocais: ArrayList<LatLng>? = null
+    private var storeMarkers: ArrayList<MarkerOptions>? = null
 
     // FCUL is the defaultLocation
     private val defaultLocation = LatLng(38.75648904803744, -9.155400218408356)
@@ -94,6 +95,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         testeLocais = ArrayList()
         testeLocais!!.add(ponto1)
         testeLocais!!.add(ponto2)
+        storeMarkers = ArrayList()
 
         //Teste da Morada Escrita
         val testeMoradaEscrita = getAddressCoordenates("Rua Serra de Nisa 4")
@@ -265,6 +267,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         .title("Definição")
                         .snippet(morada)
                 )
+
+                storeMarker(
+                    MarkerOptions()
+                        .position(testeLocais!![i])
+                        .icon(smallMarkerIcon)
+                        .title("Definição")
+                        .snippet(morada)
+                )
             } else {
                 val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(
                     R.layout.map_marker_work,
@@ -286,6 +296,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         .title("Definição")
                         .snippet(morada)
                 )
+
+                storeMarker(
+                    MarkerOptions()
+                        .position(testeLocais!![i])
+                        .icon(smallMarkerIcon)
+                        .title("Definição")
+                        .snippet(morada)
+                )
             }
             //calculateDistance(testeLocais!![i])
             googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
@@ -293,6 +311,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
     }
+
 
     private fun setUpMap() {
 
@@ -329,11 +348,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (currentLatLong != null) {
                         googleMap.clear()
                         placeMarkerLocation(currentLatLong)
-                        googleMap.animateCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                currentLatLong, ZOOM
-                            )
-                        )
+                        setMarkers()
                     }
                 }
             }
@@ -496,6 +511,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun setLocationFetchSettings() {
         locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
+    }
+
+    private fun storeMarker(marker: MarkerOptions) {
+        storeMarkers?.add(marker)
+    }
+
+    private fun setMarkers() {
+        for (marker in storeMarkers!!) {
+            googleMap.addMarker(marker)
+        }
     }
 
 
