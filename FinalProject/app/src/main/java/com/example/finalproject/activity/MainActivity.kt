@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
@@ -279,7 +280,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 18f))
             }
             //checkFire()
-            checkWork()
+            checkWork("Teste","Notificação teste com passagem de parametros", R.drawable.fireicon)
         }
 
     }
@@ -369,16 +370,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun checkWork(){
+    private fun checkWork(title: String, information: String, icon: Int){
         createNotificationChannel()
-        createNotification()
+        createNotification(title, information, icon)
     }
 
-    private fun createNotification(){
+    private fun createNotification(title: String, information: String, icon: Int){
         val notification = NotificationCompat.Builder(this,CHANNEL_ID)
-            .setContentTitle("Teste")
-            .setContentText("Este é um teste para ver se é gerado uma notificação")
-            .setSmallIcon(R.drawable.workicon)
+            .setContentTitle(title)
+            .setContentText(information)
+            .setSmallIcon(icon)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
 
