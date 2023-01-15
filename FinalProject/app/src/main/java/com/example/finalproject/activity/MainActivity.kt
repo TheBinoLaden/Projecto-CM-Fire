@@ -20,6 +20,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.SearchView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -49,6 +50,9 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.QueryDocumentSnapshot
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.util.*
 
 
@@ -83,6 +87,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var testeLocais: ArrayList<LatLng>? = null
     private var storeMarkers: ArrayList<MarkerOptions>? = null
 
+    // Stores Occurrences when the user moves but the Database remains the same
+    private var storeOccurrences: ArrayList<String>? = null
+
     // FCUL is the defaultLocation
     private val defaultLocation = LatLng(38.75648904803744, -9.155400218408356)
 
@@ -96,6 +103,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         testeLocais!!.add(ponto1)
         testeLocais!!.add(ponto2)
         storeMarkers = ArrayList()
+        storeOccurrences = ArrayList()
 
         //Teste da Morada Escrita
         val testeMoradaEscrita = getAddressCoordenates("Rua Serra de Nisa 4")
@@ -147,6 +155,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             true
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////               MAP RELATED LOGIC                     //////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
         //Inicializar o mapa
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -192,6 +204,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 Log.e("APICALL", "Could not make call to weather API", error)
             }
         })
+
+        addListenerOfDatabase()
+
     }
 
 
@@ -523,5 +538,34 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    private fun addListenerOfDatabase() {
+        val dbConnection = Firebase.firestore
+        val docRef = dbConnection.collection("occurrences")
+
+        docRef.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+            firebaseFirestoreException?.let {
+                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                return@addSnapshotListener
+            }
+
+            querySnapshot?.let {
+                for (document in it) {
+                    val convertedString = makeStringFromDatabase(document)
+                    Toast.makeText(this, , Toast.LENGTH_LONG).show()
+                    storeOccurrences?.add(convertedString)
+                }
+            }
+        }
+    }
+
+    private fun makeStringFromDatabase(document: QueryDocumentSnapshot): String {
+        val sb = StringBuilder()
+        sb.append("date: " + document.get("date"))
+        sb.append("coordinates: " + document.get("coordinates"))
+        sb.append("description: " + document.get("description"))
+        sb.append("title: " + document.get("title"))
+
+        return sb.toString()
+    }
 
 }
