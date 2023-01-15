@@ -42,6 +42,7 @@ import com.example.finalproject.activity.occurrence.ListNewOccurrenceActivity
 import com.example.finalproject.activity.occurrence.OccurrenceActivity
 import com.example.finalproject.activity.usercontrol.SettingsActivity
 import com.example.finalproject.enums.Tags
+import com.example.finalproject.firebase.dao.OccurrencesDao
 import com.example.finalproject.utils.StringUtils
 import com.example.finalproject.weather.APIData
 import com.example.finalproject.weather.Formulas
@@ -61,6 +62,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -94,10 +96,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     //Variaveis do teste do alarme de incendio
     private lateinit var dialogFire: AlertDialog
 
-    //Variaveis de teste dos pontos no mapa
-    val ponto1 = LatLng(38.589607, -9.154542)
-    val ponto2 = LatLng(38.589846, -9.154051)
-    private var testeLocais: ArrayList<LatLng>? = null
     private var storeMarkers: ArrayList<MarkerOptions>? = null
 
     // Stores Occurrences when the user moves but the Database remains the same
@@ -112,19 +110,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(R.layout.activity_main)
 
         //adicionar lista de pontos
-        testeLocais = ArrayList()
-        testeLocais!!.add(ponto1)
-        testeLocais!!.add(ponto2)
         storeMarkers = ArrayList()
         storeOccurrences = ArrayList()
-
-        //Teste da Morada Escrita
-        val testeMoradaEscrita = getAddressCoordenates("Rua Serra de Nisa 4")
-        val testeEscrita =
-            testeMoradaEscrita.latitude.toString() + "," + testeMoradaEscrita.longitude.toString()
-
-        //testeLocais!!.add(testeMoradaEscrita)
-        //Fim do Teste
 
         toolbar = findViewById(R.id.myToolBar)
         setSupportActionBar(toolbar)
@@ -167,6 +154,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
             true
         }
+
+        addListenerOfDatabase()
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////               MAP RELATED LOGIC                     //////////////////
@@ -218,7 +207,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
 
-        addListenerOfDatabase()
+
 
     }
 
@@ -257,6 +246,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
+        Log.d("tag","1")
 
         //Localização do utilizador
         googleMap.uiSettings.isZoomControlsEnabled = true
@@ -269,28 +259,32 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         setUpMap()
 
-        //Código para adicionar os pontos
-        for (i in testeLocais!!.indices) {
+        //Teste obter dados da base de dados
+        val currences: ArrayList<String>
+        if(storeOccurrences!!.isEmpty()){
+            currences = OccurrencesDao.searchOccurrences()
+        }else{
+            currences = storeOccurrences!!
+        }
+        //Log.d("tag",currences.toString())
 
-            val morada = getAddressName(testeLocais!![i].latitude, testeLocais!![i].longitude)
+        for (i in currences.indices){
+            val str = ";"
+            val parts = currences[i].split(str)
 
-            if (i == 0) {
-                val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(
-                    R.layout.map_marker_fire,
-                    null
-                )
+            val morada = getAddressName(parts[1].toDouble(),parts[2].toDouble())
+
+            if (parts[0] == "Incendio"){
+                val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.map_marker_fire, null)
                 val cardView = marker.findViewById<CardView>(R.id.markerFireIcon)
-                val bitmap = Bitmap.createScaledBitmap(
-                    viewToBitmap(cardView)!!,
-                    cardView.width,
-                    cardView.height,
-                    false
-                )
+                val bitmap = Bitmap.createScaledBitmap(viewToBitmap(cardView)!!, cardView.width, cardView.height, false)
                 val smallMarkerIcon = BitmapDescriptorFactory.fromBitmap(bitmap)
+
+                val coordenates = LatLng(parts[1].toDouble(),parts[2].toDouble())
 
                 googleMap.addMarker(
                     MarkerOptions()
-                        .position(testeLocais!![i])
+                        .position(coordenates)
                         .icon(smallMarkerIcon)
                         .title("Definição")
                         .snippet(morada)
@@ -298,28 +292,23 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 storeMarker(
                     MarkerOptions()
-                        .position(testeLocais!![i])
+                        .position(coordenates)
                         .icon(smallMarkerIcon)
                         .title("Definição")
                         .snippet(morada)
                 )
-            } else {
-                val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(
-                    R.layout.map_marker_work,
-                    null
-                )
+
+            }else if ( parts[0] == "Manutencao"){
+                val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.map_marker_work, null)
                 val cardView = marker.findViewById<CardView>(R.id.markerWorkIcon)
-                val bitmap = Bitmap.createScaledBitmap(
-                    viewToBitmap(cardView)!!,
-                    cardView.width,
-                    cardView.height,
-                    false
-                )
+                val bitmap = Bitmap.createScaledBitmap(viewToBitmap(cardView)!!, cardView.width, cardView.height, false)
                 val smallMarkerIcon = BitmapDescriptorFactory.fromBitmap(bitmap)
+
+                val coordenates = LatLng(parts[1].toDouble(),parts[2].toDouble())
 
                 googleMap.addMarker(
                     MarkerOptions()
-                        .position(testeLocais!![i])
+                        .position(coordenates)
                         .icon(smallMarkerIcon)
                         .title("Definição")
                         .snippet(morada)
@@ -327,7 +316,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 storeMarker(
                     MarkerOptions()
-                        .position(testeLocais!![i])
+                        .position(coordenates)
                         .icon(smallMarkerIcon)
                         .title("Definição")
                         .snippet(morada)
@@ -388,7 +377,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         )
 
         //checkFire()
-        checkWork("Teste", "Notificação teste com passagem de parametros", R.drawable.fireicon)
+        //checkWork("Teste", "Notificação teste com passagem de parametros", R.drawable.fireicon)
     }
 
 private fun placeMarkerLocation(currentLatLong: LatLng) {
@@ -476,11 +465,11 @@ private fun calculateDistance(pointLocation: LatLng) {
 
 private fun checkFire() {
 
-    for (i in testeLocais!!.indices) {
+    /*for (i in testeLocais!!.indices) {
         if (i == 0) {
             calculateDistance(testeLocais!![i])
         }
-    }
+    }*/
 }
 
 private fun checkWork(title: String, information: String, icon: Int) {
@@ -608,6 +597,7 @@ private fun setMarkers() {
 }
 
 private fun addListenerOfDatabase() {
+    Log.d("tag","2")
     val dbConnection = Firebase.firestore
     val docRef = dbConnection.collection("occurrences")
 
@@ -616,7 +606,7 @@ private fun addListenerOfDatabase() {
             Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
             return@addSnapshotListener
         }
-
+        Log.d("tag","3")
         querySnapshot?.let {
             for (document in it) {
                 val convertedString = makeStringFromDatabase(document)

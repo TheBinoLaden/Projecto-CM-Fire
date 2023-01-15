@@ -2,7 +2,6 @@ package com.example.finalproject.utils
 
 class StringUtils {
 
-
     companion object {
         private var DATE = 0
         private var COORDINATES = 1
@@ -45,6 +44,13 @@ class StringUtils {
         }
         fun getLat(coordinate : String): Double{
             return coordinate.substringBefore(")").substringAfter(",").toDouble()
+        }
+
+        fun getLonDB(coordinate : String): String{
+            return coordinate.substringBefore(",").substringAfter("=")
+        }
+        fun getLatDB(coordinate : String): String{
+            return coordinate.substringBefore("}").substringAfter(",").substringAfter("=")
         }
     }
 }
