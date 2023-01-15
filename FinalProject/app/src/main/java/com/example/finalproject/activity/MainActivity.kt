@@ -265,7 +265,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 placeMarkerLocation(currentLatLong)
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 18f))
             }
-            //checkFire()
+            checkFire()
         }
 
     }
@@ -273,6 +273,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun placeMarkerLocation(currentLatLong: LatLng){
         val markerOptions = MarkerOptions().position(currentLatLong)
         markerOptions.title("Estou Aqui")
+        markerOptions.draggable(true)
         googleMap.addMarker(markerOptions)
     }
 
@@ -313,6 +314,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         build.setView(view)
 
         dialogFire = build.create()
+        dialogFire.setCanceledOnTouchOutside(false)
         dialogFire.show()
     }
 
