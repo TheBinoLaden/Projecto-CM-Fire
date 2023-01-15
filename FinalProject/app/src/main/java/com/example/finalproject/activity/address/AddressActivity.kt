@@ -40,7 +40,7 @@ import com.example.finalproject.R
 import com.example.finalproject.activity.MainActivity
 import com.example.finalproject.activity.occurrence.ListNewOccurrenceActivity
 import com.example.finalproject.activity.usercontrol.SettingsActivity
-import com.example.finalproject.firebase.utils.AddressUtils
+import com.example.finalproject.utils.AddressUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.firestore.ktx.firestore
