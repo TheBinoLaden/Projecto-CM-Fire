@@ -2,24 +2,21 @@ package com.example.finalproject.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.TaskStackBuilder
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
-import android.os.Looper
 import android.os.CountDownTimer
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -35,9 +32,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.finalproject.R
 import com.example.finalproject.activity.address.AddressActivity
@@ -390,251 +387,255 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         )
 
         //checkFire()
-        checkWork("Teste","Notificação teste com passagem de parametros", R.drawable.fireicon)
+        checkWork("Teste", "Notificação teste com passagem de parametros", R.drawable.fireicon)
     }
 
-    }
 
-    private fun placeMarkerLocation(currentLatLong: LatLng) {
-        val markerOptions = MarkerOptions().position(currentLatLong)
-        markerOptions.title("Estou Aqui")
-        markerOptions.draggable(true)
-        googleMap.addMarker(markerOptions)
-    }
 
-    //Função permite obter o morada através de coordenadas
-    private fun getAddressName(lat: Double, lon: Double): String {
-        val geoCoder = Geocoder(this, Locale.getDefault())
-        val addressList = geoCoder.getFromLocation(lat, lon, 1)
+private fun placeMarkerLocation(currentLatLong: LatLng) {
+    val markerOptions = MarkerOptions().position(currentLatLong)
+    markerOptions.title("Estou Aqui")
+    markerOptions.draggable(true)
+    googleMap.addMarker(markerOptions)
+}
 
-        //val address = addressList!![0].getAddressLine(0)
-        val address = addressList!![0].getAddressLine(0) + "\n Para mais informações, clique"
-        return address
-    }
+//Função permite obter o morada através de coordenadas
+private fun getAddressName(lat: Double, lon: Double): String {
+    val geoCoder = Geocoder(this, Locale.getDefault())
+    val addressList = geoCoder.getFromLocation(lat, lon, 1)
 
-    //Função permite obter coordenadas através de morada
-    private fun getAddressCoordenates(address: String): com.google.android.gms.maps.model.LatLng {
-        val geoCoder = Geocoder(this, Locale.getDefault())
-        val cAddress = geoCoder.getFromLocationName(address, 1)
+    //val address = addressList!![0].getAddressLine(0)
+    val address = addressList!![0].getAddressLine(0) + "\n Para mais informações, clique"
+    return address
+}
 
-        val location: Address = cAddress!!.get(0)
-        val d = LatLng(location.latitude, location.longitude)
-        return d
-    }
+//Função permite obter coordenadas através de morada
+private fun getAddressCoordenates(address: String): com.google.android.gms.maps.model.LatLng {
+    val geoCoder = Geocoder(this, Locale.getDefault())
+    val cAddress = geoCoder.getFromLocationName(address, 1)
 
-    private fun viewToBitmap(view: View): Bitmap? {
-        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
-        val bitmap =
-            Bitmap.createBitmap(view.measuredWidth, view.measuredHeight, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        view.layout(0, 0, view.measuredWidth, view.measuredHeight)
-        view.draw(canvas)
-        return bitmap
-    }
+    val location: Address = cAddress!!.get(0)
+    val d = LatLng(location.latitude, location.longitude)
+    return d
+}
 
-    //Código teste alarme Incendio perto
-    private fun showDialogNormal() {
-        val build = AlertDialog.Builder(this)
-        val view = layoutInflater.inflate(R.layout.customdialogfirealarm, null)
+private fun viewToBitmap(view: View): Bitmap? {
+    view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+    val bitmap =
+        Bitmap.createBitmap(view.measuredWidth, view.measuredHeight, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    view.layout(0, 0, view.measuredWidth, view.measuredHeight)
+    view.draw(canvas)
+    return bitmap
+}
 
-        build.setView(view)
+//Código teste alarme Incendio perto
+private fun showDialogNormal() {
+    val build = AlertDialog.Builder(this)
+    val view = layoutInflater.inflate(R.layout.customdialogfirealarm, null)
 
-        dialogFire = build.create()
-        dialogFire.setCanceledOnTouchOutside(false)
-        dialogFire.show()
+    build.setView(view)
 
-        //Testar contador
-        timerAlert = object : CountDownTimer(3_000,1_000){
-            override fun onTick(remain: Long) {
-                Log.d("tag",remain.toString())
-            }
+    dialogFire = build.create()
+    dialogFire.setCanceledOnTouchOutside(false)
+    dialogFire.show()
 
-            override fun onFinish() {
-                dialogFire.cancel()
-            }
-
-        }
-        timerAlert.start()
-    }
-
-    //Código para calcular distancia
-    private fun calculateDistance(pointLocation: LatLng) {
-
-        val results = FloatArray(3)
-        Location.distanceBetween(
-            testePosicao.latitude,
-            testePosicao.longitude,
-            pointLocation.latitude,
-            pointLocation.longitude,
-            results
-        )
-
-        val final = results[0] / 1000
-
-        if (final < 5) {
-            showDialogNormal()
-        }
-        //Log.d("tag",String.format("%.1f",results[0]/1000) + "km")
-
-    }
-
-    private fun checkFire(){
-
-        for (i in testeLocais!!.indices){
-            if(i==0){
-                calculateDistance(testeLocais!![i])
-            }
-        }
-    }
-
-    private fun checkWork(title: String, information: String, icon: Int){
-        createNotificationChannel()
-        createNotification(title, information, icon)
-    }
-
-    @SuppressLint("UnspecifiedImmutableFlag")
-    private fun createNotification(title: String, information: String, icon: Int){
-        val intent = Intent(this,MainActivity::class.java)
-        var pendingIntent: PendingIntent? = null
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-            pendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_MUTABLE)
-        }else{
-            pendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_ONE_SHOT)
+    //Testar contador
+    timerAlert = object : CountDownTimer(3_000, 1_000) {
+        override fun onTick(remain: Long) {
+            Log.d("tag", remain.toString())
         }
 
-        val notification = NotificationCompat.Builder(this,CHANNEL_ID)
-            .setContentTitle(title)
-            .setContentText(information)
-            .setSmallIcon(icon)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent)
-            .build()
+        override fun onFinish() {
+            dialogFire.cancel()
+        }
 
-        val notificationManager = NotificationManagerCompat.from(this)
-
-        notificationManager.notify(NOTIFICATIO_ID, notification)
     }
+    timerAlert.start()
+}
 
-    private fun createNotificationChannel(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME,NotificationManager.IMPORTANCE_DEFAULT).apply {
-                lightColor = Color.GREEN
-                enableLights(true)
-            }
+//Código para calcular distancia
+private fun calculateDistance(pointLocation: LatLng) {
 
-            val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            manager.createNotificationChannel(channel)
+    val results = FloatArray(3)
+    Location.distanceBetween(
+        testePosicao.latitude,
+        testePosicao.longitude,
+        pointLocation.latitude,
+        pointLocation.longitude,
+        results
+    )
+
+    val final = results[0] / 1000
+
+    if (final < 5) {
+        showDialogNormal()
+    }
+    //Log.d("tag",String.format("%.1f",results[0]/1000) + "km")
+
+}
+
+private fun checkFire() {
+
+    for (i in testeLocais!!.indices) {
+        if (i == 0) {
+            calculateDistance(testeLocais!![i])
         }
     }
+}
 
-    private fun updateLocationUI() {
-        try {
-            if (locationGranted) {
-                googleMap.isMyLocationEnabled = true
-                googleMap.uiSettings.isMyLocationButtonEnabled = true
-            } else {
-                googleMap.isMyLocationEnabled = false
-                googleMap.uiSettings.isMyLocationButtonEnabled = false
-                lastLocation = null
-                getLocationPermission()
-            }
-        } catch (e: SecurityException) {
-            Log.e("Exception: %s", e.message, e)
-        }
+private fun checkWork(title: String, information: String, icon: Int) {
+    createNotificationChannel()
+    createNotification(title, information, icon)
+}
+
+@SuppressLint("UnspecifiedImmutableFlag")
+private fun createNotification(title: String, information: String, icon: Int) {
+    val intent = Intent(this, MainActivity::class.java)
+    var pendingIntent: PendingIntent? = null
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
+    } else {
+        pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
     }
 
-    // Double check against the permission
-    private fun getLocationPermission() {
-        if (ContextCompat.checkSelfPermission(
-                this.applicationContext,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-            == PackageManager.PERMISSION_GRANTED
-        ) {
-            locationGranted = true
+    val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+        .setContentTitle(title)
+        .setContentText(information)
+        .setSmallIcon(icon)
+        .setPriority(NotificationCompat.PRIORITY_HIGH)
+        .setContentIntent(pendingIntent)
+        .build()
+
+    val notificationManager = NotificationManagerCompat.from(this)
+
+    notificationManager.notify(NOTIFICATIO_ID, notification)
+}
+
+private fun createNotificationChannel() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val channel = NotificationChannel(
+            CHANNEL_ID,
+            CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            lightColor = Color.GREEN
+            enableLights(true)
+        }
+
+        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        manager.createNotificationChannel(channel)
+    }
+}
+
+private fun updateLocationUI() {
+    try {
+        if (locationGranted) {
+            googleMap.isMyLocationEnabled = true
+            googleMap.uiSettings.isMyLocationButtonEnabled = true
         } else {
-            ActivityCompat.requestPermissions(
-                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                34
-            )
+            googleMap.isMyLocationEnabled = false
+            googleMap.uiSettings.isMyLocationButtonEnabled = false
+            lastLocation = null
+            getLocationPermission()
         }
+    } catch (e: SecurityException) {
+        Log.e("Exception: %s", e.message, e)
     }
+}
 
-    @SuppressLint("MissingPermission")
-    private fun getFirstDeviceLocation() {
-        try {
-            if (locationGranted) {
-                val locationResult = fusedLocationClient.lastLocation
-                locationResult.addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        // Set the map's camera position to the current location of the device.
-                        lastLocation = task.result
-                        if (lastLocation != null) {
-                            // private val defaultLocation = LatLng(-33.8523341, 151.2106085)
-                            googleMap.moveCamera(
-                                CameraUpdateFactory.newLatLngZoom(
-                                    LatLng(
-                                        lastLocation!!.latitude,
-                                        lastLocation!!.longitude
-                                    ), ZOOM.toFloat()
-                                )
-                            )
-                        }
-                    } else {
+// Double check against the permission
+private fun getLocationPermission() {
+    if (ContextCompat.checkSelfPermission(
+            this.applicationContext,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        == PackageManager.PERMISSION_GRANTED
+    ) {
+        locationGranted = true
+    } else {
+        ActivityCompat.requestPermissions(
+            this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            34
+        )
+    }
+}
+
+@SuppressLint("MissingPermission")
+private fun getFirstDeviceLocation() {
+    try {
+        if (locationGranted) {
+            val locationResult = fusedLocationClient.lastLocation
+            locationResult.addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Set the map's camera position to the current location of the device.
+                    lastLocation = task.result
+                    if (lastLocation != null) {
+                        // private val defaultLocation = LatLng(-33.8523341, 151.2106085)
                         googleMap.moveCamera(
-                            CameraUpdateFactory.newLatLngZoom(defaultLocation, ZOOM.toFloat())
+                            CameraUpdateFactory.newLatLngZoom(
+                                LatLng(
+                                    lastLocation!!.latitude,
+                                    lastLocation!!.longitude
+                                ), ZOOM.toFloat()
+                            )
                         )
-                        googleMap.uiSettings.isMyLocationButtonEnabled = false
                     }
-                }
-            }
-        } catch (e: SecurityException) {
-            Log.e("Security Exception: %s", e.message, e)
-        }
-    }
-
-    private fun setLocationFetchSettings() {
-        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
-    }
-
-    private fun storeMarker(marker: MarkerOptions) {
-        storeMarkers?.add(marker)
-    }
-
-    private fun setMarkers() {
-        for (marker in storeMarkers!!) {
-            googleMap.addMarker(marker)
-        }
-    }
-
-    private fun addListenerOfDatabase() {
-        val dbConnection = Firebase.firestore
-        val docRef = dbConnection.collection("occurrences")
-
-        docRef.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-            firebaseFirestoreException?.let {
-                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
-                return@addSnapshotListener
-            }
-
-            querySnapshot?.let {
-                for (document in it) {
-                    val convertedString = makeStringFromDatabase(document)
-                    Toast.makeText(this, , Toast.LENGTH_LONG).show()
-                    storeOccurrences?.add(convertedString)
+                } else {
+                    googleMap.moveCamera(
+                        CameraUpdateFactory.newLatLngZoom(defaultLocation, ZOOM.toFloat())
+                    )
+                    googleMap.uiSettings.isMyLocationButtonEnabled = false
                 }
             }
         }
+    } catch (e: SecurityException) {
+        Log.e("Security Exception: %s", e.message, e)
     }
+}
 
-    private fun makeStringFromDatabase(document: QueryDocumentSnapshot): String {
-        val sb = StringBuilder()
-        sb.append("date: " + document.get("date"))
-        sb.append("coordinates: " + document.get("coordinates"))
-        sb.append("description: " + document.get("description"))
-        sb.append("title: " + document.get("title"))
+private fun setLocationFetchSettings() {
+    locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
+}
 
-        return sb.toString()
+private fun storeMarker(marker: MarkerOptions) {
+    storeMarkers?.add(marker)
+}
+
+private fun setMarkers() {
+    for (marker in storeMarkers!!) {
+        googleMap.addMarker(marker)
     }
+}
+
+private fun addListenerOfDatabase() {
+    val dbConnection = Firebase.firestore
+    val docRef = dbConnection.collection("occurrences")
+
+    docRef.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+        firebaseFirestoreException?.let {
+            Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+            return@addSnapshotListener
+        }
+
+        querySnapshot?.let {
+            for (document in it) {
+                val convertedString = makeStringFromDatabase(document)
+                Toast.makeText(this,convertedString , Toast.LENGTH_LONG).show()
+                storeOccurrences?.add(convertedString)
+            }
+        }
+    }
+}
+
+private fun makeStringFromDatabase(document: QueryDocumentSnapshot): String {
+    val sb = StringBuilder()
+    sb.append("date: " + document.get("date"))
+    sb.append("coordinates: " + document.get("coordinates"))
+    sb.append("description: " + document.get("description"))
+    sb.append("title: " + document.get("title"))
+
+    return sb.toString()
+}
 
 }
