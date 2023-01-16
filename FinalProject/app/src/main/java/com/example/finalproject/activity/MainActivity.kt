@@ -375,9 +375,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             locationCallback,
             Looper.getMainLooper()
         )
+    }
 
-        //checkFire()
-        //checkWork("Teste", "Notificação teste com passagem de parametros", R.drawable.fireicon)
+    private fun testNotification(ocurencia:String){
+        val str = ";"
+        val parts = ocurencia.split(str)
+
+        Log.d("tag",parts[4])
+
+        if(parts[4] == "Incendio"){
+            checkFire(parts[1])
+        }else if(parts[4] == "Manutencao"){
+            checkWork("Teste", "Notificação teste com passagem de parametros", R.drawable.fireicon)
+        }
     }
 
 private fun placeMarkerLocation(currentLatLong: LatLng) {
@@ -443,12 +453,12 @@ private fun showDialogNormal() {
 }
 
 //Código para calcular distancia
-private fun calculateDistance(pointLocation: LatLng) {
+private fun calculateDistance(pointLocation: LatLng):Int {
 
     val results = FloatArray(3)
     Location.distanceBetween(
-        testePosicao.latitude,
-        testePosicao.longitude,
+        defaultLocation.latitude,
+        defaultLocation.longitude,
         pointLocation.latitude,
         pointLocation.longitude,
         results
@@ -456,20 +466,23 @@ private fun calculateDistance(pointLocation: LatLng) {
 
     val final = results[0] / 1000
 
-    if (final < 5) {
-        showDialogNormal()
-    }
+    return final.toInt()
     //Log.d("tag",String.format("%.1f",results[0]/1000) + "km")
 
 }
 
-private fun checkFire() {
+private fun checkFire(coordenates:String) {
 
-    /*for (i in testeLocais!!.indices) {
-        if (i == 0) {
-            calculateDistance(testeLocais!![i])
-        }
-    }*/
+    val lat = StringUtils.getLatDB(coordenates)
+    val long = StringUtils.getLonDB(coordenates)
+
+    val coord = LatLng(lat.toDouble(),long.toDouble())
+    val distance = calculateDistance(coord)
+
+    if(distance <= 5){
+        showDialogNormal()
+    }
+
 }
 
 private fun checkWork(title: String, information: String, icon: Int) {
@@ -611,7 +624,9 @@ private fun addListenerOfDatabase() {
             for (document in it) {
                 val convertedString = makeStringFromDatabase(document)
                 Toast.makeText(this,"New Update of Occurrences." , Toast.LENGTH_LONG).show()
+                Log.d("tag",convertedString)
                 storeOccurrences?.add(convertedString)
+                testNotification(convertedString)
             }
         }
     }
@@ -619,11 +634,11 @@ private fun addListenerOfDatabase() {
 
 private fun makeStringFromDatabase(document: QueryDocumentSnapshot): String {
     val sb = StringBuilder()
-    sb.append("date:" + document.get("date") + "|")
-    sb.append("coordinates:" + document.get("coordinates") + "|")
-    sb.append("description:" + document.get("description") + "|")
-    sb.append("title:" + document.get("title") + "|")
-    sb.append("type:" + document.get("type"))
+    sb.append(document.get("date").toString() + ";")
+    sb.append(document.get("coordinates").toString() + ";")
+    sb.append(document.get("description").toString() + ";")
+    sb.append(document.get("title").toString() + ";")
+    sb.append(document.get("type").toString())
 
     return sb.toString()
 }
