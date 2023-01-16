@@ -2,6 +2,7 @@ package com.example.finalproject.activity.address
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -52,7 +53,7 @@ class AddressActivity : AppCompatActivity() {
     lateinit var username: String
     lateinit var description: String
     lateinit var address: String
-    lateinit var favAddresses: ArrayList<Map<String, String>>
+    lateinit var favAddresses: ArrayList<HashMap<String, Any>>
     lateinit var toggle: ActionBarDrawerToggle
     lateinit var toolbar: androidx.appcompat.widget.Toolbar
 
@@ -65,6 +66,17 @@ class AddressActivity : AppCompatActivity() {
         AddressUtils.getFavAddress(username) { favAddress ->
             findViewById<ComposeView>(R.id.my_composable).setContent {
                 ListAnimationComponent(favAddress)
+            }
+        }
+
+        // Para cada favAddress, vai buscar as coordenadas guardadas na BD
+        AddressUtils.getFavAddress(username) { favAddress ->
+            for (address in favAddress) {
+                val addressName = address["Address"] as String
+                val description = address["Description"] as String
+                val latLon = address["coordinates"] as HashMap<String, Float>
+                val lat = latLon["lat"] as Float
+                val lon = latLon["lon"] as Float
             }
         }
 
@@ -125,7 +137,10 @@ class AddressActivity : AppCompatActivity() {
             mDialogView.findViewById<Button>(R.id.btn_dialogConfirm).setOnClickListener {
                 address = mAlertDialog.findViewById<EditText>(R.id.dialogAddress)?.text.toString()
                 description = mAlertDialog.findViewById<EditText>(R.id.dialogDescription)?.text.toString()
-                AddressUtils.addNewAddress(username, address, description)
+                //TODO converter o address para coordenadas (also o address precisa de auto complete?)
+                val lat = 0f
+                val lon = 0f
+                AddressUtils.addNewAddress(username, address, description, lat, lon)
                 mAlertDialog.dismiss()
                 AddressUtils.getFavAddress(username) { favAddress ->
                     findViewById<ComposeView>(R.id.my_composable).setContent {
@@ -143,8 +158,8 @@ class AddressActivity : AppCompatActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @ExperimentalAnimationApi
     @Composable
-    fun ListAnimationComponent(favAddress: ArrayList<Map<String, String>>) {
-        val deletedAddressList = remember { mutableStateListOf<Map<String, String>>() }
+    fun ListAnimationComponent(favAddress: ArrayList<HashMap<String, Any>>) {
+        val deletedAddressList = remember { mutableStateListOf<HashMap<String, Any>>() }
 
         LazyColumn(
             modifier = Modifier.fillMaxWidth()
@@ -167,8 +182,8 @@ class AddressActivity : AppCompatActivity() {
                     Card(
                         shape = RoundedCornerShape(4.dp),
                         modifier = Modifier
-                            .fillParentMaxWidth()
-                            .padding(6.dp),
+                                .fillParentMaxWidth()
+                                .padding(6.dp),
                         onClick = {
                             openDialog = true
                         }
@@ -178,7 +193,7 @@ class AddressActivity : AppCompatActivity() {
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                address["Address"]!!, style = TextStyle(
+                                address["Address"] as String, style = TextStyle(
                                     color = Color.Black,
                                     fontSize = 20.sp,
                                     textAlign = TextAlign.Center
@@ -207,7 +222,7 @@ class AddressActivity : AppCompatActivity() {
     }
 
     @Composable
-    fun DialogInfo(address: Map<String, String>, onDismiss: () -> Unit) {
+    fun DialogInfo(address: HashMap<String, Any>, onDismiss: () -> Unit) {
         val contextForToast = LocalContext.current.applicationContext
 
         Dialog(
@@ -224,7 +239,7 @@ class AddressActivity : AppCompatActivity() {
                 ) {
                     Text(
                         modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
-                        text = address["Address"]!!,
+                        text = address["Address"] as String,
                         textAlign = TextAlign.Center,
                         style = TextStyle(
                             fontSize = 20.sp
@@ -233,7 +248,7 @@ class AddressActivity : AppCompatActivity() {
 
                     Text(
                         modifier = Modifier.padding(start = 12.dp, end = 12.dp),
-                        text = address["Description"]!!,
+                        text = address["Description"] as String,
                         textAlign = TextAlign.Center,
                         style = TextStyle(
                             fontSize = 14.sp
@@ -242,8 +257,8 @@ class AddressActivity : AppCompatActivity() {
 
                     Button(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 36.dp, start = 36.dp, end = 36.dp, bottom = 8.dp),
+                                .fillMaxWidth()
+                                .padding(top = 36.dp, start = 36.dp, end = 36.dp, bottom = 8.dp),
                         onClick = {
                             onDismiss()
                             Toast.makeText(
