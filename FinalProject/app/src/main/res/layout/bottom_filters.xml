@@ -31,10 +31,32 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Emergência"
+            android:text="Tipo de Ocurrencia"
             android:padding="10dp"
             android:textColor="@color/black"
             android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <CheckBox
+                android:id="@+id/cb_incendio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Incendio" />
+
+            <CheckBox
+                android:id="@+id/cb_manutencao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Manutencao" />
+
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -44,6 +66,11 @@
             android:textColor="@color/black"
             android:textStyle="bold"/>
 
+        <Button
+            android:id="@+id/btn_applyFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Aplicar Filtros" />
 
 
     </LinearLayout>

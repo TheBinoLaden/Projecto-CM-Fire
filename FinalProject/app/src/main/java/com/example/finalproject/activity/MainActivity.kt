@@ -22,6 +22,8 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
+import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.SearchView
 import android.widget.TextView
@@ -52,6 +54,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
@@ -207,8 +210,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
 
-
-
     }
 
 
@@ -239,6 +240,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
             bottomSheetDialog.setContentView(bottomSheetView)
             bottomSheetDialog.show()
+
+            val fireOption = bottomSheetDialog.findViewById<CheckBox>(R.id.cb_incendio)
+            val workOtion= bottomSheetDialog.findViewById<CheckBox>(R.id.cb_manutencao)
+            val btnFilter= bottomSheetDialog.findViewById<Button>(R.id.btn_applyFilter)
+            btnFilter!!.setOnClickListener{
+                if(fireOption!!.isChecked && !workOtion!!.isChecked){
+                    filters("Incendio")
+                    Log.d("tag","Incendio ativado")
+                }else if(workOtion!!.isChecked && !fireOption.isChecked){
+                    filters("Manutencao")
+                    Log.d("tag","Manutencao ativado")
+                }else{
+                    filters("Tudo")
+                    Log.d("tag","Tudo ativado")
+                }
+            }
         }
 
         return super.onOptionsItemSelected(item)
@@ -266,68 +283,59 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }else{
             currences = storeOccurrences!!
         }
-        //Log.d("tag",currences.toString())
 
         for (i in currences.indices){
             val str = ";"
             val parts = currences[i].split(str)
+            var smallMarkerIcon:BitmapDescriptor? = null
 
             val morada = getAddressName(parts[1].toDouble(),parts[2].toDouble())
 
             if (parts[0] == "Incendio"){
-                val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.map_marker_fire, null)
-                val cardView = marker.findViewById<CardView>(R.id.markerFireIcon)
-                val bitmap = Bitmap.createScaledBitmap(viewToBitmap(cardView)!!, cardView.width, cardView.height, false)
-                val smallMarkerIcon = BitmapDescriptorFactory.fromBitmap(bitmap)
-
-                val coordenates = LatLng(parts[1].toDouble(),parts[2].toDouble())
-
-                googleMap.addMarker(
-                    MarkerOptions()
-                        .position(coordenates)
-                        .icon(smallMarkerIcon)
-                        .title("Definição")
-                        .snippet(morada)
-                )
-
-                storeMarker(
-                    MarkerOptions()
-                        .position(coordenates)
-                        .icon(smallMarkerIcon)
-                        .title("Definição")
-                        .snippet(morada)
-                )
+                smallMarkerIcon = iconMap(0)
 
             }else if ( parts[0] == "Manutencao"){
-                val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.map_marker_work, null)
-                val cardView = marker.findViewById<CardView>(R.id.markerWorkIcon)
-                val bitmap = Bitmap.createScaledBitmap(viewToBitmap(cardView)!!, cardView.width, cardView.height, false)
-                val smallMarkerIcon = BitmapDescriptorFactory.fromBitmap(bitmap)
+                smallMarkerIcon = iconMap(1)
 
-                val coordenates = LatLng(parts[1].toDouble(),parts[2].toDouble())
-
-                googleMap.addMarker(
-                    MarkerOptions()
-                        .position(coordenates)
-                        .icon(smallMarkerIcon)
-                        .title("Definição")
-                        .snippet(morada)
-                )
-
-                storeMarker(
-                    MarkerOptions()
-                        .position(coordenates)
-                        .icon(smallMarkerIcon)
-                        .title("Definição")
-                        .snippet(morada)
-                )
             }
+            val coordenates = LatLng(parts[1].toDouble(),parts[2].toDouble())
+
+            googleMap.addMarker(
+                MarkerOptions()
+                    .position(coordenates)
+                    .icon(smallMarkerIcon)
+                    .title("Definição")
+                    .snippet(morada)
+            )
+
+            storeMarker(
+                MarkerOptions()
+                    .position(coordenates)
+                    .icon(smallMarkerIcon)
+                    .title("Definição")
+                    .snippet(morada)
+            )
 
             googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
         }
 
     }
 
+    private fun iconMap(type:Int): BitmapDescriptor? {
+        var bitmap: Bitmap? = null
+        if(type == 0){
+            val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.map_marker_fire, null)
+            val cardView = marker.findViewById<CardView>(R.id.markerFireIcon)
+            bitmap = Bitmap.createScaledBitmap(viewToBitmap(cardView)!!, cardView.width, cardView.height, false)
+
+        }else if (type == 1){
+            val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.map_marker_work, null)
+            val cardView = marker.findViewById<CardView>(R.id.markerWorkIcon)
+            bitmap = Bitmap.createScaledBitmap(viewToBitmap(cardView)!!, cardView.width, cardView.height, false)
+        }
+        val smallMarkerIcon = bitmap?.let { BitmapDescriptorFactory.fromBitmap(it) }
+        return smallMarkerIcon
+    }
 
     private fun setUpMap() {
 
@@ -375,6 +383,100 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             locationCallback,
             Looper.getMainLooper()
         )
+    }
+
+    private fun filters(filtro:String){
+        googleMap.clear()
+        storeMarkers!!.clear()
+        Log.d("tag",storeOccurrences!!.size.toString())
+        for(i in storeOccurrences!!.indices){
+            val str = ";"
+            val parts = storeOccurrences!![i].split(str)
+
+            var smallMarkerIcon:BitmapDescriptor? = null
+
+            val lat = StringUtils.getLatDB(parts[1])
+            val lon = StringUtils.getLonDB(parts[1])
+            val morada = getAddressName(lat.toDouble(),lon.toDouble())
+            val coordenates = LatLng(lat.toDouble(),lon.toDouble())
+
+            if(filtro == "Tudo"){
+                if(parts[4] == "Incendio"){
+                    smallMarkerIcon = iconMap(0)
+                    googleMap.addMarker(
+                        MarkerOptions()
+                            .position(coordenates)
+                            .icon(smallMarkerIcon)
+                            .title("Definição")
+                            .snippet(morada)
+                    )
+
+                    storeMarker(
+                        MarkerOptions()
+                            .position(coordenates)
+                            .icon(smallMarkerIcon)
+                            .title("Definição")
+                            .snippet(morada)
+                    )
+                }else if(parts[4] == "Manutencao"){
+                    smallMarkerIcon = iconMap(1)
+                    googleMap.addMarker(
+                        MarkerOptions()
+                            .position(coordenates)
+                            .icon(smallMarkerIcon)
+                            .title("Definição")
+                            .snippet(morada)
+                    )
+
+                    storeMarker(
+                        MarkerOptions()
+                            .position(coordenates)
+                            .icon(smallMarkerIcon)
+                            .title("Definição")
+                            .snippet(morada)
+                    )
+                }
+            }else{
+                if(parts[4] == filtro){
+                    if(filtro == "Incendio"){
+                        smallMarkerIcon = iconMap(0)
+                        googleMap.addMarker(
+                            MarkerOptions()
+                                .position(coordenates)
+                                .icon(smallMarkerIcon)
+                                .title("Definição")
+                                .snippet(morada)
+                        )
+
+                        storeMarker(
+                            MarkerOptions()
+                                .position(coordenates)
+                                .icon(smallMarkerIcon)
+                                .title("Definição")
+                                .snippet(morada)
+                        )
+                    }else if(filtro == "Manutencao"){
+                        smallMarkerIcon = iconMap(1)
+                        googleMap.addMarker(
+                            MarkerOptions()
+                                .position(coordenates)
+                                .icon(smallMarkerIcon)
+                                .title("Definição")
+                                .snippet(morada)
+                        )
+
+                        storeMarker(
+                            MarkerOptions()
+                                .position(coordenates)
+                                .icon(smallMarkerIcon)
+                                .title("Definição")
+                                .snippet(morada)
+                        )
+                    }
+                }
+            }
+        }
+
     }
 
     private fun testNotification(ocurencia:String){
@@ -606,6 +708,7 @@ private fun storeMarker(marker: MarkerOptions) {
 private fun setMarkers() {
     for (marker in storeMarkers!!) {
         googleMap.addMarker(marker)
+        googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
     }
 }
 
