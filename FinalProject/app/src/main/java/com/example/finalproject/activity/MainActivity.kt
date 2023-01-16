@@ -103,6 +103,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     // Stores Occurrences when the user moves but the Database remains the same
     private var storeOccurrences: ArrayList<String>? = null
+    private var listOccurrencesNotification: ArrayList<String>? = null
 
     // FCUL is the defaultLocation
     private val defaultLocation = LatLng(38.75648904803744, -9.155400218408356)
@@ -115,6 +116,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         //adicionar lista de pontos
         storeMarkers = ArrayList()
         storeOccurrences = ArrayList()
+        listOccurrencesNotification = ArrayList()
 
         toolbar = findViewById(R.id.myToolBar)
         setSupportActionBar(toolbar)
@@ -373,6 +375,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         googleMap.clear()
                         placeMarkerLocation(currentLatLong)
                         setMarkers()
+                        createNotification()
                     }
                 }
             }
@@ -383,6 +386,30 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             locationCallback,
             Looper.getMainLooper()
         )
+    }
+
+    private fun createNotification(){
+        for (i in storeOccurrences!!.indices){
+            val str = ";"
+            val parts = storeOccurrences!![i].split(str)
+            val lat = StringUtils.getLatDB(parts[1])
+            val lon = StringUtils.getLonDB(parts[1])
+            val coord = lat+ ";" + lon
+            var alredyExist = 0
+
+            Log.d("tag","entrou no create")
+            Log.d("tag",listOccurrencesNotification!!.size.toString())
+            for(r in listOccurrencesNotification!!.indices){
+                if(listOccurrencesNotification!![r] == coord){
+                    Log.d("tag","já existe")
+                    alredyExist = 1
+                }
+            }
+
+            if (alredyExist == 0){
+                testNotification(storeOccurrences!![i])
+            }
+        }
     }
 
     private fun filters(filtro:String){
@@ -483,7 +510,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val str = ";"
         val parts = ocurencia.split(str)
 
-        Log.d("tag",parts[4])
+        val lat = StringUtils.getLatDB(parts[1])
+        val lon = StringUtils.getLonDB(parts[1])
+        val coord = lat+ ";" + lon
 
         if(parts[4] == "Incendio"){
             checkFire(parts[1])
@@ -556,17 +585,19 @@ private fun showDialogNormal() {
 
 //Código para calcular distancia
 private fun calculateDistance(pointLocation: LatLng):Int {
+    var final = 0.0f
+    if(lastLocation != null){
+        val results = FloatArray(3)
+        Location.distanceBetween(
+            lastLocation!!.latitude,
+            lastLocation!!.longitude,
+            pointLocation.latitude,
+            pointLocation.longitude,
+            results
+        )
 
-    val results = FloatArray(3)
-    Location.distanceBetween(
-        defaultLocation.latitude,
-        defaultLocation.longitude,
-        pointLocation.latitude,
-        pointLocation.longitude,
-        results
-    )
-
-    val final = results[0] / 1000
+        final = results[0] / 1000
+    }
 
     return final.toInt()
     //Log.d("tag",String.format("%.1f",results[0]/1000) + "km")
@@ -582,7 +613,9 @@ private fun checkFire(coordenates:String) {
     val distance = calculateDistance(coord)
 
     if(distance <= 5){
+        Thread.sleep(3000)
         showDialogNormal()
+        listOccurrencesNotification!!.add(lat.toString() + ";" + long.toString())
     }
 
 }
@@ -729,7 +762,6 @@ private fun addListenerOfDatabase() {
                 Toast.makeText(this,"New Update of Occurrences." , Toast.LENGTH_LONG).show()
                 Log.d("tag",convertedString)
                 storeOccurrences?.add(convertedString)
-                testNotification(convertedString)
             }
         }
     }
