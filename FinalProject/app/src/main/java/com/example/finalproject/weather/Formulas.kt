@@ -1,5 +1,7 @@
 package com.example.finalproject.weather
 
+import android.graphics.Color
+
 class Formulas {
     companion object {
         fun rainfallFactor(rainfallVolume: Float): Float {
@@ -83,6 +85,17 @@ class Formulas {
                 in 9..12 -> "High"
                 in 13..17 -> "Severe"
                 else -> "Extreme"
+            }
+        }
+
+        fun fdiInterpretationColor(fireDangerIndex: Int): Int {
+            return when (fireDangerIndex) {
+                in 0..1 -> Color.WHITE
+                in 2..4 -> Color.parseColor("#d7ffd3")
+                in 5..8 -> Color.parseColor("#ff8c00")
+                in 9..12 -> Color.RED
+                in 13..17 -> Color.parseColor("#590000")
+                else -> Color.BLACK
             }
         }
     }

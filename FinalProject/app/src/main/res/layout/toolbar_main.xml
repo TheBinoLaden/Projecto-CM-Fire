@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -31,23 +32,42 @@
         android:backgroundTint="#6f1d1b"
         android:src="@drawable/ic_baseline_add_24" />
 
-    <TextView
-        android:id="@+id/txt_risk"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/fire_risk_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp"
-        android:paddingRight="10dp"
-        android:paddingLeft="10dp"
-        android:background="@drawable/tv_border"
-        android:text="Risco: Baixo"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="20dp" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:contentPadding="15dp">
+
+        <LinearLayout
+            android:id="@+id/fire_risk_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/fire_risk_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Risco: Moderate"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/fire_risk_text_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Temperatura: 40C\nVento: 30 m/s"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>
