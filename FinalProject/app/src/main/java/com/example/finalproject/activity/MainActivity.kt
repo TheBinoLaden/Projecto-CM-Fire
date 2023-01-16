@@ -265,7 +265,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-        Log.d("tag","1")
 
         //Localização do utilizador
         googleMap.uiSettings.isZoomControlsEnabled = true
@@ -397,11 +396,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val coord = lat+ ";" + lon
             var alredyExist = 0
 
-            Log.d("tag","entrou no create")
-            Log.d("tag",listOccurrencesNotification!!.size.toString())
             for(r in listOccurrencesNotification!!.indices){
                 if(listOccurrencesNotification!![r] == coord){
-                    Log.d("tag","já existe")
+
                     alredyExist = 1
                 }
             }
@@ -415,7 +412,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun filters(filtro:String){
         googleMap.clear()
         storeMarkers!!.clear()
-        Log.d("tag",storeOccurrences!!.size.toString())
+
         for(i in storeOccurrences!!.indices){
             val str = ";"
             val parts = storeOccurrences!![i].split(str)
@@ -572,7 +569,7 @@ private fun showDialogNormal() {
     //Testar contador
     timerAlert = object : CountDownTimer(3_000, 1_000) {
         override fun onTick(remain: Long) {
-            Log.d("tag", remain.toString())
+
         }
 
         override fun onFinish() {
@@ -746,7 +743,6 @@ private fun setMarkers() {
 }
 
 private fun addListenerOfDatabase() {
-    Log.d("tag","2")
     val dbConnection = Firebase.firestore
     val docRef = dbConnection.collection("occurrences")
 
@@ -755,7 +751,6 @@ private fun addListenerOfDatabase() {
             Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
             return@addSnapshotListener
         }
-        Log.d("tag","3")
         querySnapshot?.let {
             for (document in it) {
                 val convertedString = makeStringFromDatabase(document)
