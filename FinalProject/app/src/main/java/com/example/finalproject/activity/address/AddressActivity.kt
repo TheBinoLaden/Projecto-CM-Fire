@@ -261,35 +261,12 @@ class AddressActivity : AppCompatActivity() {
                                 .padding(top = 36.dp, start = 36.dp, end = 36.dp, bottom = 8.dp),
                         onClick = {
                             onDismiss()
-                            Toast.makeText(
-                                contextForToast,
-                                "Click: Setup Now",
-                                Toast.LENGTH_SHORT
-                            ).show()
                         }) {
                         Text(
-                            text = "Setup Now",
+                            text = "Close",
                             color = Color.White,
                             style = TextStyle(
                                 fontSize = 16.sp
-                            )
-                        )
-                    }
-
-                    TextButton(
-                        onClick = {
-                            onDismiss()
-                            Toast.makeText(
-                                contextForToast,
-                                "Click: I'll Do It Later",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }) {
-                        Text(
-                            text = "I'll Do It Later",
-                            color = Color(0xFF35898f),
-                            style = TextStyle(
-                                fontSize = 14.sp
                             )
                         )
                     }

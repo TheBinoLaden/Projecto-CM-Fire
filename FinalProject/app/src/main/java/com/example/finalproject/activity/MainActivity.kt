@@ -44,17 +44,13 @@ import androidx.transition.TransitionManager
 import com.example.finalproject.R
 import com.example.finalproject.activity.address.AddressActivity
 import com.example.finalproject.activity.occurrence.ListNewOccurrenceActivity
-import com.example.finalproject.activity.occurrence.OccurrenceActivity
+import com.example.finalproject.activity.occurrence.AddOccurrenceActivity
 import com.example.finalproject.activity.usercontrol.SettingsActivity
-import com.example.finalproject.enums.Tags
-import com.example.finalproject.firebase.dao.OccurrencesDao
 import com.example.finalproject.utils.AddressUtils
+import com.example.finalproject.utils.OccurrencesUtils
 import com.example.finalproject.utils.StringUtils
 import com.example.finalproject.utils.WeatherUtils
-import com.example.finalproject.weather.APIData
 import com.example.finalproject.weather.District
-import com.example.finalproject.weather.Formulas
-import com.example.finalproject.weather.Model
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -85,7 +81,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var floatingButton: FloatingActionButton
     lateinit var txtInfo: TextView
     lateinit var fireRiskText: TextView
-    lateinit var fireRiskDetails :TextView
+    lateinit var fireRiskDetails: TextView
     private lateinit var timerAlert: CountDownTimer
 
     //Variaveis para teste de notificacao
@@ -191,7 +187,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         floatingButton = findViewById(R.id.btn_addProblem)
         floatingButton.setOnClickListener {
             //Colocar pop-up para adicionar ocorrencia
-            startActivity(Intent(this, OccurrenceActivity::class.java))
+            startActivity(Intent(this, AddOccurrenceActivity::class.java))
         }
 
         // Fire Risk card view and details
@@ -237,18 +233,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             bottomSheetDialog.show()
 
             val fireOption = bottomSheetDialog.findViewById<CheckBox>(R.id.cb_incendio)
-            val workOtion = bottomSheetDialog.findViewById<CheckBox>(R.id.cb_manutencao)
+            val workOption = bottomSheetDialog.findViewById<CheckBox>(R.id.cb_manutencao)
             val btnFilter = bottomSheetDialog.findViewById<Button>(R.id.btn_applyFilter)
             btnFilter!!.setOnClickListener {
-                if (fireOption!!.isChecked && !workOtion!!.isChecked) {
+                if (fireOption!!.isChecked && !workOption!!.isChecked) {
                     filters("Incendio")
-                    Log.d("tag", "Incendio ativado")
-                } else if (workOtion!!.isChecked && !fireOption.isChecked) {
+                } else if (workOption!!.isChecked && !fireOption.isChecked) {
                     filters("Manutencao")
-                    Log.d("tag", "Manutencao ativado")
                 } else {
                     filters("Tudo")
-                    Log.d("tag", "Tudo ativado")
                 }
             }
         }
@@ -258,63 +251,53 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-
         //Localização do utilizador
         googleMap.uiSettings.isZoomControlsEnabled = true
-
         // Updates the UI location settings
         updateLocationUI()
-
         // Gets the first location of the device
         getFirstDeviceLocation()
-
         setUpMap()
 
-        //Teste obter dados da base de dados
-        val currences: ArrayList<String>
-        if (storeOccurrences!!.isEmpty()) {
-            currences = OccurrencesDao.searchOccurrences()
-        } else {
-            currences = storeOccurrences!!
-        }
+        OccurrencesUtils.searchOccurrencesList { documents ->
+            for (document in documents) {
+                val latLon = document["coordinates"] as HashMap<String, Double>
+                val lat = latLon["lat"] as Double
+                val lon = latLon["lon"] as Double
+                val type = document["type"] as String
+                var smallMarkerIcon: BitmapDescriptor? = null
+                val morada = getAddressName(lat, lon)
 
-        for (i in currences.indices) {
-            val str = ";"
-            val parts = currences[i].split(str)
-            var smallMarkerIcon: BitmapDescriptor? = null
+                if (type == "Incendio") {
+                    smallMarkerIcon = iconMap(0)
+                } else if (type == "Manutencao") {
+                    smallMarkerIcon = iconMap(1)
+                }
 
-            val morada = getAddressName(parts[1].toDouble(), parts[2].toDouble())
+                val coordinates = LatLng(lat, lon)
+                googleMap.addMarker(
+                        MarkerOptions()
+                                .position(coordinates)
+                                .icon(smallMarkerIcon)
+                                .title("Definição")
+                                .snippet(morada)
+                )
 
-            if (parts[0] == "Incendio") {
-                smallMarkerIcon = iconMap(0)
+                storeMarker(
+                        MarkerOptions()
+                                .position(coordinates)
+                                .icon(smallMarkerIcon)
+                                .title("Definição")
+                                .snippet(morada)
+                )
 
-            } else if (parts[0] == "Manutencao") {
-                smallMarkerIcon = iconMap(1)
-
+                googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
             }
-            val coordenates = LatLng(parts[1].toDouble(), parts[2].toDouble())
-
-            googleMap.addMarker(
-                    MarkerOptions()
-                            .position(coordenates)
-                            .icon(smallMarkerIcon)
-                            .title("Definição")
-                            .snippet(morada)
-            )
-
-            storeMarker(
-                    MarkerOptions()
-                            .position(coordenates)
-                            .icon(smallMarkerIcon)
-                            .title("Definição")
-                            .snippet(morada)
-            )
-
-            googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
         }
 
         // Quando o user para de dar drag da camera, dá update das coordenadas e da info do distrito
-        googleMap.setOnCameraIdleListener {
+        googleMap.setOnCameraIdleListener()
+        {
             val target = googleMap.cameraPosition.target
             val latLng = LatLng(target.latitude, target.longitude)
             val geocoder = Geocoder(applicationContext, Locale.getDefault())
@@ -375,10 +358,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (locationResult.locations.size != 0
                         && (locationResult.locations[locationResult.locations.size - 1] != lastLocation || locationResult.locations.size == 1)
                 ) {
-                    Log.d(Tags.COORDINATES.name, lastLocation?.latitude.toString())
-                    Log.d(Tags.COORDINATES.name, lastLocation?.longitude.toString())
-                    Log.d(Tags.COORDINATES.name, lastLocation?.accuracy.toString())
-
                     val currentLatLong =
                             lastLocation?.let { LatLng(it.latitude, lastLocation!!.longitude) }
 
@@ -405,15 +384,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val lat = StringUtils.getLatDB(parts[1])
             val lon = StringUtils.getLonDB(parts[1])
             val coord = lat + ";" + lon
-            var alredyExist = 0
+            var alreadyExist = 0
 
             for (r in listOccurrencesNotification!!.indices) {
                 if (listOccurrencesNotification!![r] == coord) {
-                    alredyExist = 1
+                    alreadyExist = 1
                 }
             }
 
-            if (alredyExist == 0) {
+            if (alreadyExist == 0) {
                 testNotification(storeOccurrences!![i], actualLocation)
             }
         }
@@ -574,7 +553,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         //Testar contador
         timerAlert = object : CountDownTimer(3_000, 1_000) {
             override fun onTick(remain: Long) {
-
             }
 
             override fun onFinish() {

@@ -39,6 +39,7 @@ import com.example.finalproject.activity.address.AddressActivity
 import com.example.finalproject.activity.usercontrol.SettingsActivity
 import com.example.finalproject.utils.OccurrencesUtils
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.DocumentSnapshot
 
 
 class ListNewOccurrenceActivity : AppCompatActivity() {
@@ -54,15 +55,16 @@ class ListNewOccurrenceActivity : AppCompatActivity() {
         toolbar = findViewById(R.id.myToolBar2)
         setSupportActionBar(toolbar)
 
-
         val drawerLayout: DrawerLayout = findViewById(R.id.drawerOccur)
         val navView: NavigationView = findViewById(R.id.nav_view02)
         val header: View = navView.getHeaderView(0)
         val name = header.findViewById<TextView>(R.id.textView7)
         name.text = intent.extras?.getString("username") ?: ""
 
-        findViewById<ComposeView>(R.id.occurrenceList).setContent {
-            ListAnimationComponent(OccurrencesUtils.handleOccurrencesList())
+        OccurrencesUtils.searchOccurrencesList { documents ->
+            findViewById<ComposeView>(R.id.occurrenceList).setContent {
+                ListAnimationComponent(documents)
+            }
         }
 
         toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
@@ -110,64 +112,63 @@ class ListNewOccurrenceActivity : AppCompatActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @ExperimentalAnimationApi
     @Composable
-    fun ListAnimationComponent(list: List<String>) {
-        val deletedAddressList = remember { mutableStateListOf<String>() }
+    fun ListAnimationComponent(documents: ArrayList<DocumentSnapshot>) {
+        val deletedDocList = remember { mutableStateListOf<DocumentSnapshot>() }
 
         LazyColumn(
-            modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
         ) {
             itemsIndexed(
-                items = list
-            ) { index, address ->
+                    items = documents
+            ) { index, doc ->
                 AnimatedVisibility(
-                    visible = !deletedAddressList.contains(address),
-                    enter = expandVertically(),
-                    exit = shrinkVertically(
-                        animationSpec = tween(
-                            durationMillis = 500,
+                        visible = !deletedDocList.contains(doc),
+                        enter = expandVertically(),
+                        exit = shrinkVertically(
+                                animationSpec = tween(
+                                        durationMillis = 500,
+                                )
                         )
-                    )
                 ) {
                     var openDialog by remember {
                         mutableStateOf(false) // Initially dialog is closed
                     }
                     Card(
-                        shape = RoundedCornerShape(4.dp),
-                        modifier = Modifier
-                            .fillParentMaxWidth()
-                            .padding(6.dp),
-                        onClick = {
-                            openDialog = true
-                        }
+                            shape = RoundedCornerShape(4.dp),
+                            modifier = Modifier
+                                    .fillParentMaxWidth()
+                                    .padding(6.dp),
+                            onClick = {
+                                openDialog = true
+                            }
                     ) {
                         Row(
-                            modifier = Modifier.fillParentMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                                modifier = Modifier.fillParentMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                address, style = TextStyle(
+                                    doc["title"] as String, style = TextStyle(
                                     color = Color.Black,
                                     fontSize = 20.sp,
                                     textAlign = TextAlign.Center
-                                ), modifier = Modifier.padding(16.dp)
+                            ), modifier = Modifier.padding(16.dp)
                             )
                             IconButton(
-                                onClick = {
-                                    deletedAddressList.add(address)
-
-                                    //TODO also delete in DB
-                                }
+                                    onClick = {
+                                        deletedDocList.add(doc)
+                                        OccurrencesUtils.removeOccurrence(doc)
+                                    }
                             ) {
                                 Icon(
-                                    imageVector = Icons.Filled.Delete,
-                                    contentDescription = "Delete"
+                                        imageVector = Icons.Filled.Delete,
+                                        contentDescription = "Delete"
                                 )
                             }
                         }
                     }
 
                     if (openDialog) {
-                        DialogInfo(address) { openDialog = false }
+                        DialogInfo(doc) { openDialog = false }
                     }
                 }
             }
@@ -175,80 +176,65 @@ class ListNewOccurrenceActivity : AppCompatActivity() {
     }
 
     @Composable
-    fun DialogInfo(address: String, onDismiss: () -> Unit) {
+    fun DialogInfo(document: DocumentSnapshot, onDismiss: () -> Unit) {
         val contextForToast = LocalContext.current.applicationContext
 
         Dialog(
-            onDismissRequest = {
-                onDismiss()
-            }
+                onDismissRequest = {
+                    onDismiss()
+                }
         ) {
             Surface(
-                modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
             ) {
                 Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
-                        text = address,
-                        textAlign = TextAlign.Center,
-                        style = TextStyle(
-                            fontSize = 20.sp
-                        )
+                            modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
+                            text = document["title"] as String,
+                            textAlign = TextAlign.Center,
+                            style = TextStyle(
+                                    fontSize = 20.sp
+                            )
                     )
 
                     Text(
-                        modifier = Modifier.padding(start = 12.dp, end = 12.dp),
-                        text = "Some bla bla",
-                        textAlign = TextAlign.Center,
-                        style = TextStyle(
-                            fontSize = 14.sp
-                        )
+                            modifier = Modifier.padding(start = 12.dp, end = 12.dp),
+                            text = document["description"] as String,
+                            textAlign = TextAlign.Center,
+                            style = TextStyle(
+                                    fontSize = 14.sp
+                            )
+                    )
+
+                    Text(
+                            modifier = Modifier.padding(start = 12.dp, end = 12.dp),
+                            text = "Tipo: " + document["type"] as String,
+                            textAlign = TextAlign.Center,
+                            style = TextStyle(
+                                    fontSize = 14.sp
+                            )
                     )
 
                     Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 36.dp, start = 36.dp, end = 36.dp, bottom = 8.dp),
-                        onClick = {
-                            onDismiss()
-                            Toast.makeText(
-                                contextForToast,
-                                "Click: Setup Now",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }) {
+                            modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 36.dp, start = 36.dp, end = 36.dp, bottom = 8.dp),
+                            onClick = {
+                                onDismiss()
+                            }) {
                         Text(
-                            text = "Setup Now",
-                            color = Color.White,
-                            style = TextStyle(
-                                fontSize = 16.sp
-                            )
-                        )
-                    }
-
-                    TextButton(
-                        onClick = {
-                            onDismiss()
-                            Toast.makeText(
-                                contextForToast,
-                                "Click: I'll Do It Later",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }) {
-                        Text(
-                            text = "I'll Do It Later",
-                            color = Color(0xFF35898f),
-                            style = TextStyle(
-                                fontSize = 14.sp
-                            )
+                                text = "Close",
+                                color = Color.White,
+                                style = TextStyle(
+                                        fontSize = 16.sp
+                                )
                         )
                     }
                 }
             }
         }
     }
-
 }

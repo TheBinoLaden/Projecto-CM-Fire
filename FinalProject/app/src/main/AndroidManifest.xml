@@ -60,7 +60,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".activity.occurrence.OccurrenceActivity"
+            android:name=".activity.occurrence.AddOccurrenceActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

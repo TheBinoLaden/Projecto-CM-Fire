@@ -1,36 +1,30 @@
 package com.example.finalproject.utils
 
-import android.widget.ArrayAdapter
-import android.widget.ListView
-import com.example.finalproject.R
 import com.example.finalproject.firebase.dao.OccurrencesDao
-import com.example.finalproject.activity.occurrence.ListNewOccurrenceActivity
 import com.example.finalproject.weather.Model
+import com.google.firebase.firestore.DocumentSnapshot
 import java.util.*
-import kotlin.collections.ArrayList
 
 class OccurrencesUtils {
 
     companion object {
-
-        fun addNewOccurrence(coordinates: Model.Coord,title: String, description: String) {
-            val rightNow = Calendar.getInstance().time
+        fun addNewOccurrence(coordinates: Model.Coord, title: String, description: String, type: String) {
             val dataset = hashMapOf(
-                "coordinates" to coordinates,
-                "date" to rightNow,
-                "description" to description,
-                "title" to title
+                    "coordinates" to coordinates,
+                    "date" to System.currentTimeMillis(),
+                    "description" to description,
+                    "title" to title,
+                    "type" to type
             )
             OccurrencesDao.addNewOccurrence(dataset)
-
         }
 
-        fun handleOccurrencesList():
-                ArrayList<String> {
+        fun searchOccurrencesList(callback: (ArrayList<DocumentSnapshot>) -> Unit) {
+            OccurrencesDao.searchOccurrences(callback)
+        }
 
-            return OccurrencesDao.searchRecentOccurrences()
-
-
+        fun removeOccurrence(documentSnapshot: DocumentSnapshot) {
+            OccurrencesDao.removeOccurrence(documentSnapshot)
         }
     }
 }
