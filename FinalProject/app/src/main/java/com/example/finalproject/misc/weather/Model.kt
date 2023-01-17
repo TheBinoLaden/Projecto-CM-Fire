@@ -1,21 +1,21 @@
-package com.example.finalproject.weather
+package com.example.finalproject.misc.weather
 
 class Model {
     data class Result(
-        val coord: Coord, // City geo location
-        val weather: List<Weather>, // Weather conditions
-        val base: String, // Internal parameter
-        val main: Main, // Atmospheric conditions
-        val visibility: Int, // Visibility, meter. The maximum value of the visibility is 10km
-        val wind: Wind, // Wind information
-        val rain: Rain, // Rain volume
-        val clouds: Clouds, // Cloudiness
-        val deltaTime: Long, // Time of data calculation, unix, UTC
-        val sys: Sys, // Location information
-        val timezone: Long, // Shift in seconds from UTC
-        val cityID: Int, // City ID
-        val cityName: String, // City name
-        val cod: Int // Internal parameter
+            val coord: Coord, // City geo location
+            val weather: List<Weather>, // Weather conditions
+            val base: String, // Internal parameter
+            val main: Main, // Atmospheric conditions
+            val visibility: Int, // Visibility, meter. The maximum value of the visibility is 10km
+            val wind: Wind, // Wind information
+            val rain: Rain, // Rain volume
+            val clouds: Clouds, // Cloudiness
+            val deltaTime: Long, // Time of data calculation, unix, UTC
+            val sys: Sys, // Location information
+            val timezone: Long, // Shift in seconds from UTC
+            val cityID: Int, // City ID
+            val cityName: String, // City name
+            val cod: Int // Internal parameter
     )
 
     data class Coord(

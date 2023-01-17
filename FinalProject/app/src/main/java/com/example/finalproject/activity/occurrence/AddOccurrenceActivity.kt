@@ -10,7 +10,7 @@ import androidx.appcompat.widget.Toolbar
 import com.example.finalproject.R
 import com.example.finalproject.activity.MainActivity
 import com.example.finalproject.utils.OccurrencesUtils
-import com.example.finalproject.weather.Model
+import com.example.finalproject.misc.weather.Model
 
 class AddOccurrenceActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 

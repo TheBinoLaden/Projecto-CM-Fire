@@ -19,7 +19,7 @@
         android:theme="@style/Theme.FinalProject"
         tools:targetApi="31">
         <activity
-            android:name=".activity.CustomInfoWindowAdapter"
+            android:name=".misc.adapter.CustomInfoWindowAdapter"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

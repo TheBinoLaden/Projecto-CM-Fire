@@ -1,7 +1,6 @@
-package com.example.finalproject.firebase.dao
+package com.example.finalproject.dao
 
 import android.util.Log
-import android.widget.Toast
 import com.example.finalproject.enums.Tags
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot

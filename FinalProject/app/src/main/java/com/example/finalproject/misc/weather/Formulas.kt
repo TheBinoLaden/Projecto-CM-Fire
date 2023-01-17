@@ -1,4 +1,4 @@
-package com.example.finalproject.weather
+package com.example.finalproject.misc.weather
 
 import android.graphics.Color
 

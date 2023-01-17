@@ -1,5 +1,7 @@
 package com.example.finalproject.utils
 
+import com.google.firebase.firestore.QueryDocumentSnapshot
+
 class StringUtils {
 
     companion object {
@@ -51,6 +53,17 @@ class StringUtils {
         }
         fun getLatDB(coordinate : String): String{
             return coordinate.substringBefore("}").substringAfter(",").substringAfter("=")
+        }
+
+        fun makeStringFromDatabase(document: QueryDocumentSnapshot): String {
+            val sb = StringBuilder()
+            sb.append(document.get("date").toString() + ";")
+            sb.append(document.get("coordinates").toString() + ";")
+            sb.append(document.get("description").toString() + ";")
+            sb.append(document.get("title").toString() + ";")
+            sb.append(document.get("type").toString())
+
+            return sb.toString()
         }
     }
 }

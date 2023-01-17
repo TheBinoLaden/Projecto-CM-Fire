@@ -1,10 +1,10 @@
 package com.example.finalproject.utils
 
-import com.example.finalproject.firebase.dao.OccurrencesDao
-import com.example.finalproject.weather.Model
+import com.example.finalproject.dao.OccurrencesDao
+import com.example.finalproject.misc.helperclasses.Address
+import com.example.finalproject.misc.helperclasses.Occurrence
 import com.google.firebase.firestore.DocumentSnapshot
-import java.util.*
-import kotlin.collections.HashMap
+import com.google.firebase.firestore.QueryDocumentSnapshot
 
 class OccurrencesUtils {
 
@@ -25,6 +25,23 @@ class OccurrencesUtils {
 
         fun removeOccurrence(documentSnapshot: DocumentSnapshot) {
             OccurrencesDao.removeOccurrence(documentSnapshot)
+        }
+
+
+        fun makeOccurrenceFromDatabase(document: QueryDocumentSnapshot): Occurrence {
+
+
+            val newDate = document.get("date").toString()
+            val coordinates = document.get("coordinates").toString()
+            val description = document.get("description").toString()
+            val title = document.get("title").toString()
+            val type = document.get("type").toString()
+
+            val lon = StringUtils.getLonDB(coordinates)
+            val lat = StringUtils.getLatDB(coordinates)
+
+            val newAddress = Address(coordinates, description, lat, lon)
+            return Occurrence(newAddress, newDate, description, title, type)
         }
     }
 }

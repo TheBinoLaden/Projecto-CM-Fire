@@ -1,11 +1,11 @@
 package com.example.finalproject.utils
 
 import android.util.Log
-import com.example.finalproject.firebase.dao.WeatherDao
-import com.example.finalproject.weather.APIData
-import com.example.finalproject.weather.District
-import com.example.finalproject.weather.Formulas
-import com.example.finalproject.weather.Model
+import com.example.finalproject.dao.WeatherDao
+import com.example.finalproject.misc.weather.APIData
+import com.example.finalproject.misc.weather.District
+import com.example.finalproject.misc.weather.Formulas
+import com.example.finalproject.misc.weather.Model
 
 class WeatherUtils {
     companion object {

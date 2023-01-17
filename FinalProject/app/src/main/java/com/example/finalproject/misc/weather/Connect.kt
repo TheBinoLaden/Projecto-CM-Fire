@@ -1,4 +1,4 @@
-package com.example.finalproject.weather
+package com.example.finalproject.misc.weather
 
 import io.reactivex.Observable
 import retrofit2.Retrofit

@@ -1,4 +1,4 @@
-package com.example.finalproject.firebase.dao
+package com.example.finalproject.dao
 
 import android.util.Log
 import com.example.finalproject.enums.Tags

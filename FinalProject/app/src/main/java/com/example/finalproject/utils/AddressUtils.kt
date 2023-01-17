@@ -3,7 +3,7 @@ package com.example.finalproject.utils
 import android.content.Context
 import android.location.Address
 import android.location.Geocoder
-import com.example.finalproject.firebase.dao.AddressDao
+import com.example.finalproject.dao.AddressDao
 import com.google.android.gms.maps.model.LatLng
 import java.io.IOException
 

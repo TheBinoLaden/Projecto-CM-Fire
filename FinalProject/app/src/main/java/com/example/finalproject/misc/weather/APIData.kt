@@ -1,4 +1,4 @@
-package com.example.finalproject.weather
+package com.example.finalproject.misc.weather
 
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable

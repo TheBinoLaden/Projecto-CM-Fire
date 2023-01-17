@@ -1,4 +1,4 @@
-package com.example.finalproject.firebase.dao
+package com.example.finalproject.dao
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore

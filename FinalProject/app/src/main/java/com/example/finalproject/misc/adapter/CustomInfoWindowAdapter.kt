@@ -1,29 +1,30 @@
-package com.example.finalproject.activity
+package com.example.finalproject.misc.adapter
 
 import android.app.Activity
 import android.view.View
 import android.widget.TextView
 import com.example.finalproject.R
+import com.example.finalproject.activity.MainActivity
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
 
-class CustomInfoWindowAdapter(context: MainActivity):GoogleMap.InfoWindowAdapter {
+class CustomInfoWindowAdapter(context: MainActivity) : GoogleMap.InfoWindowAdapter {
 
     //var mContext = context
-    var mWindow = (context as Activity).layoutInflater.inflate(R.layout.custom_info_window,null)
+    var mWindow = (context as Activity).layoutInflater.inflate(R.layout.custom_info_window, null)
 
-    private fun rendowWindowText (marker: Marker, view: View){
+    private fun rendowWindowText(marker: Marker, view: View) {
         val title = marker.title
         val tvTitle = view.findViewById<TextView>(R.id.title_info_window)
 
         val snippet = marker.snippet
         val tvSnippet = view.findViewById<TextView>(R.id.snippet_info_window)
 
-        if(!title.equals("")){
+        if (!title.equals("")) {
             tvTitle.text = title
         }
 
-        if(!snippet.equals("")){
+        if (!snippet.equals("")) {
             tvSnippet.text = snippet
         }
     }

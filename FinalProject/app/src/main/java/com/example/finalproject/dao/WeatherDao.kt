@@ -1,9 +1,8 @@
-package com.example.finalproject.firebase.dao
+package com.example.finalproject.dao
 
-import com.example.finalproject.weather.District
+import com.example.finalproject.misc.weather.District
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.type.Date
 
 class WeatherDao {
     companion object {

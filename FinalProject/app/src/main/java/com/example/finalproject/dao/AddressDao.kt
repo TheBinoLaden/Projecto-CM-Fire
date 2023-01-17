@@ -1,4 +1,4 @@
-package com.example.finalproject.firebase.dao
+package com.example.finalproject.dao
 
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
