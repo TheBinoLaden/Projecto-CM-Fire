@@ -270,7 +270,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 val lon = latLon["lon"] as Double
                 val type = document["type"] as String
                 var smallMarkerIcon: BitmapDescriptor? = null
-                val morada = getAddressName(lat, lon)
+
+                val coordinates = LatLng(lat, lon)
+                val morada = AddressUtils.getAddressFromLocation(this,coordinates)
 
                 if (type == "Incendio") {
                     smallMarkerIcon = iconMap(0)
@@ -278,7 +280,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     smallMarkerIcon = iconMap(1)
                 }
 
-                val coordinates = LatLng(lat, lon)
                 googleMap.addMarker(
                         MarkerOptions()
                                 .position(coordinates)
@@ -421,78 +422,51 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun filters(filtro: String) {
+    private fun filters(filtro:String) {
         googleMap.clear()
         storeMarkers!!.clear()
 
-        for (i in storeOccurrences!!.indices) {
-            val str = ";"
-            val parts = storeOccurrences!![i].split(str)
+        OccurrencesUtils.searchOccurrencesList { documents ->
+            for (document in documents) {
+                val latLon = document["coordinates"] as HashMap<String, Double>
+                val lat = latLon["lat"] as Double
+                val lon = latLon["lon"] as Double
+                val type = document["type"] as String
+                var smallMarkerIcon: BitmapDescriptor? = null
 
-            var smallMarkerIcon: BitmapDescriptor? = null
+                val coordenates = LatLng(lat, lon)
+                val morada = AddressUtils.getAddressFromLocation(this,coordenates)
 
-            val lat = StringUtils.getLatDB(parts[1])
-            val lon = StringUtils.getLonDB(parts[1])
-            val morada = getAddressName(lat.toDouble(), lon.toDouble())
-            val coordenates = LatLng(lat.toDouble(), lon.toDouble())
-
-            if (filtro == "Tudo") {
-                if (parts[4] == "Incendio") {
-                    smallMarkerIcon = iconMap(0)
-                    googleMap.addMarker(
-                            MarkerOptions()
-                                    .position(coordenates)
-                                    .icon(smallMarkerIcon)
-                                    .title("Definição")
-                                    .snippet(morada)
-                    )
-
-                    storeMarker(
-                            MarkerOptions()
-                                    .position(coordenates)
-                                    .icon(smallMarkerIcon)
-                                    .title("Definição")
-                                    .snippet(morada)
-                    )
-                } else if (parts[4] == "Manutencao") {
-                    smallMarkerIcon = iconMap(1)
-                    googleMap.addMarker(
-                            MarkerOptions()
-                                    .position(coordenates)
-                                    .icon(smallMarkerIcon)
-                                    .title("Definição")
-                                    .snippet(morada)
-                    )
-
-                    storeMarker(
-                            MarkerOptions()
-                                    .position(coordenates)
-                                    .icon(smallMarkerIcon)
-                                    .title("Definição")
-                                    .snippet(morada)
-                    )
-                }
-            } else {
-                if (parts[4] == filtro) {
-                    if (filtro == "Incendio") {
+                if (filtro == "Tudo") {
+                    if (type == "Incendio") {
                         smallMarkerIcon = iconMap(0)
-                        googleMap.addMarker(
-                                MarkerOptions()
-                                        .position(coordenates)
-                                        .icon(smallMarkerIcon)
-                                        .title("Definição")
-                                        .snippet(morada)
-                        )
-
-                        storeMarker(
-                                MarkerOptions()
-                                        .position(coordenates)
-                                        .icon(smallMarkerIcon)
-                                        .title("Definição")
-                                        .snippet(morada)
-                        )
-                    } else if (filtro == "Manutencao") {
+                    } else if (type == "Manutencao") {
                         smallMarkerIcon = iconMap(1)
+                    }
+
+                    googleMap.addMarker(
+                            MarkerOptions()
+                                    .position(coordenates)
+                                    .icon(smallMarkerIcon)
+                                    .title("Definição")
+                                    .snippet(morada)
+                    )
+
+                    storeMarker(
+                            MarkerOptions()
+                                    .position(coordenates)
+                                    .icon(smallMarkerIcon)
+                                    .title("Definição")
+                                    .snippet(morada)
+                    )
+                } else {
+                    if (type == filtro) {
+                        if (filtro == "Incendio") {
+                            smallMarkerIcon = iconMap(0)
+
+                        } else if (filtro == "Manutencao") {
+                            smallMarkerIcon = iconMap(1)
+                        }
                         googleMap.addMarker(
                                 MarkerOptions()
                                         .position(coordenates)
@@ -512,27 +486,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
-
-    }
-
-    //Função permite obter o morada através de coordenadas
-    private fun getAddressName(lat: Double, lon: Double): String {
-        val geoCoder = Geocoder(this, Locale.getDefault())
-        val addressList = geoCoder.getFromLocation(lat, lon, 1)
-
-        //val address = addressList!![0].getAddressLine(0)
-        val address = addressList!![0].getAddressLine(0) + "\n Para mais informações, clique"
-        return address
-    }
-
-    //Função permite obter coordenadas através de morada
-    private fun getAddressCoordenates(address: String): com.google.android.gms.maps.model.LatLng {
-        val geoCoder = Geocoder(this, Locale.getDefault())
-        val cAddress = geoCoder.getFromLocationName(address, 1)
-
-        val location: Address = cAddress!!.get(0)
-        val d = LatLng(location.latitude, location.longitude)
-        return d
     }
 
     private fun viewToBitmap(view: View): Bitmap? {

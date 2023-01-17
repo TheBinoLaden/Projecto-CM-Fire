@@ -39,5 +39,21 @@ class AddressUtils {
             }
             return p1
         }
+
+        fun getAddressFromLocation(context: Context,coord: LatLng):String?{
+            val coder = Geocoder(context)
+            val address: List<Address>?
+            var morada: String? = null
+            try{
+                address = coder.getFromLocation(coord.latitude,coord.longitude,5)
+                if (address == null){
+                    return null
+                }
+                morada = address[0].getAddressLine(0)
+            }catch (ex: IOException){
+                ex.printStackTrace()
+            }
+            return morada
+        }
     }
 }
