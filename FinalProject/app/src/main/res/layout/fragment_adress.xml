@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.address.AddressFragment">
+
+    <TableLayout
+        android:id="@+id/tb_adress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:background="@color/purple_200">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Definição"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:padding="8sp"
+                android:layout_weight="3"
+                android:gravity="center_horizontal"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Morada"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:layout_weight="6"
+                android:gravity="center_horizontal"/>
+
+        </TableRow>
+
+        <TableRow
+            android:background="@color/cinza">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Casa"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                android:padding="4sp"
+                android:layout_weight="3"
+                android:gravity="center_horizontal"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Escrever uma morada"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                android:padding="4sp"
+                android:layout_weight="6"
+                android:gravity="center_horizontal"/>
+
+        </TableRow>
+
+    </TableLayout>
+
+</FrameLayout>

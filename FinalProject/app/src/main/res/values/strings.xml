@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Fire Watcher</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="log_in">Log In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="emailUsername">Email/Username</string>
+    <string name="password">Password</string>
+    <string name="password_forgot">Esqueceu-se da Password?</string>
+    <string name="password_confirm">Confirme Password</string>
+    <string name="or">OR</string>
+    <string name="twitter">twitter</string>
+    <string name="gmail">gmail</string>
+    <string name="facebook">facebook</string>
+    <string name="verificado">Verificado</string>
+    <string name="novas_ocorrencias">Novas Ocorrências</string>
+    <string name="permission_rationale">Localização é necessária para a app funcionar</string>
+    <string name="permission_denied_explanation">Permissão negada. Necessária para o funcionamento correto.</string>
+    <string name="settings">Settings</string>
+    <string name="ok">OK</string>
+</resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <EditText
+        android:id="@+id/dialogAddress"
+        android:hint="Insira Morada"
+        android:maxLength="15"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/dialogDescription"
+        android:hint="Insira Descrição"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:gravity="center">
+        <Button
+            android:id="@+id/btn_dialogConfirm"
+            android:text="Confirmar"
+            android:textColor="@color/white"
+            android:layout_marginRight="5dp"
+            android:background="#6f1d1b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_dialogCancel"
+            android:text="Cancelar"
+            android:textColor="@color/white"
+            android:layout_marginLeft="5dp"
+            android:background="#6f1d1b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+</LinearLayout>
