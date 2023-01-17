@@ -137,16 +137,18 @@ class AddressActivity : AppCompatActivity() {
             mDialogView.findViewById<Button>(R.id.btn_dialogConfirm).setOnClickListener {
                 address = mAlertDialog.findViewById<EditText>(R.id.dialogAddress)?.text.toString()
                 description = mAlertDialog.findViewById<EditText>(R.id.dialogDescription)?.text.toString()
-                //TODO converter o address para coordenadas (also o address precisa de auto complete?)
-                val lat = 0f
-                val lon = 0f
-                AddressUtils.addNewAddress(username, address, description, lat, lon)
-                mAlertDialog.dismiss()
-                AddressUtils.getFavAddress(username) { favAddress ->
-                    findViewById<ComposeView>(R.id.my_composable).setContent {
-                        ListAnimationComponent(favAddress)
+                val latLon = AddressUtils.getLocationFromAddress(this, address)
+                if (latLon != null) {
+                    AddressUtils.addNewAddress(username, address, description,
+                            latLon.latitude.toFloat(), latLon.longitude.toFloat())
+                    mAlertDialog.dismiss()
+                    AddressUtils.getFavAddress(username) { favAddress ->
+                        findViewById<ComposeView>(R.id.my_composable).setContent {
+                            ListAnimationComponent(favAddress)
+                        }
                     }
                 }
+                else Toast.makeText(this, "Address not found!", Toast.LENGTH_SHORT).show()
             }
 
             mDialogView.findViewById<Button>(R.id.btn_dialogCancel).setOnClickListener {

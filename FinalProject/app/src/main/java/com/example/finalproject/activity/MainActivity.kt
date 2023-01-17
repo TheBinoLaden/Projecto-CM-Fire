@@ -187,7 +187,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         floatingButton = findViewById(R.id.btn_addProblem)
         floatingButton.setOnClickListener {
             //Colocar pop-up para adicionar ocorrencia
-            startActivity(Intent(this, AddOccurrenceActivity::class.java))
+            val intent = Intent(this, AddOccurrenceActivity::class.java)
+            intent.putExtra("username", userName)
+            intent.putExtra("latitude", lastLocation!!.latitude)
+            intent.putExtra("longitude", lastLocation!!.longitude)
+            startActivity(intent)
         }
 
         // Fire Risk card view and details

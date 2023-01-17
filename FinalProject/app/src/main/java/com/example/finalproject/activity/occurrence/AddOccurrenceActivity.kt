@@ -43,10 +43,12 @@ class AddOccurrenceActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
         spinner.adapter = staticAdapter
         spinner.onItemSelectedListener = this;
 
+        val lat = intent.extras!!.getDouble("latitude").toFloat()
+        val lon = intent.extras!!.getDouble("longitude").toFloat()
         submitButton = findViewById(R.id.btn_submit)
         submitButton.setOnClickListener {
             OccurrencesUtils.addNewOccurrence(
-                    Model.Coord(6F, 6F),
+                    hashMapOf("lat" to lat, "lon" to lon),
                     titleText.text.toString(),
                     descriptionText.text.toString(),
                     selectedType
@@ -66,8 +68,12 @@ class AddOccurrenceActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
 
     override fun onItemSelected(parent: AdapterView<*>?, v: View?, position: Int, id: Long) {
         when (position) {
-            0 -> {selectedType = occurrenceTypes[position]}
-            1 -> {selectedType = occurrenceTypes[position]}
+            0 -> {
+                selectedType = occurrenceTypes[position]
+            }
+            1 -> {
+                selectedType = occurrenceTypes[position]
+            }
         }
     }
 

@@ -1,6 +1,12 @@
 package com.example.finalproject.utils
 
+import android.content.Context
+import android.location.Address
+import android.location.Geocoder
 import com.example.finalproject.firebase.dao.AddressDao
+import com.google.android.gms.maps.model.LatLng
+import java.io.IOException
+
 
 class AddressUtils {
     companion object {
@@ -14,6 +20,24 @@ class AddressUtils {
 
         fun removeAddress(username: String, addressToDel: HashMap<String, Any>) {
             AddressDao.removeAddress(username, addressToDel)
+        }
+
+        fun getLocationFromAddress(context: Context, strAddress: String?): LatLng? {
+            val coder = Geocoder(context)
+            val address: List<Address>?
+            var p1: LatLng? = null
+            try {
+                // May throw an IOException
+                address = coder.getFromLocationName(strAddress!!, 5)
+                if (address == null) {
+                    return null
+                }
+                val location: Address = address[0]
+                p1 = LatLng(location.latitude, location.longitude)
+            } catch (ex: IOException) {
+                ex.printStackTrace()
+            }
+            return p1
         }
     }
 }

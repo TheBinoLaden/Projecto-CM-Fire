@@ -9,7 +9,7 @@
     <EditText
         android:id="@+id/dialogAddress"
         android:hint="Insira Morada"
-        android:maxLength="15"
+        android:maxLength="100"
         android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
@@ -17,6 +17,7 @@
     <EditText
         android:id="@+id/dialogDescription"
         android:hint="Insira Descrição"
+        android:maxLength="200"
         android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
