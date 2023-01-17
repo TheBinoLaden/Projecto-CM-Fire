@@ -347,20 +347,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun setUpMap() {
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_REQUEST_CODE
-            )
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_REQUEST_CODE)
+            googleMap.isMyLocationEnabled = true
+            googleMap.uiSettings.isMyLocationButtonEnabled = true
         }
 
         setLocationFetchSettings()
-
 
         // Este callback permite apanhar as alteracoes de localizacao
         locationCallback = object : LocationCallback() {
@@ -379,9 +372,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
                     if (currentLatLong != null) {
                         googleMap.clear()
-                        placeMarkerLocation(currentLatLong)
                         setMarkers()
-                        createNotification(currentLatLong,)
+                        createNotification(currentLatLong)
                     }
                 }
             }
@@ -526,13 +518,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
-private fun placeMarkerLocation(currentLatLong: LatLng) {
-    val markerOptions = MarkerOptions().position(currentLatLong)
-    markerOptions.title("Estou Aqui")
-    markerOptions.draggable(true)
-    googleMap.addMarker(markerOptions)
-}
-
 //Função permite obter o morada através de coordenadas
 private fun getAddressName(lat: Double, lon: Double): String {
     val geoCoder = Geocoder(this, Locale.getDefault())
@@ -633,7 +618,6 @@ private fun checkFire(coordenates:String,actualLocation: LatLng) {
         val distance = calculateDistance(coord,actualLocation)
 
         if(distance <= 5){
-            //Thread.sleep(3000)
             createNotificationChannel()
             createNotification(information)
             listOccurrencesNotification!!.add(lat.toString() + ";" + long.toString())
