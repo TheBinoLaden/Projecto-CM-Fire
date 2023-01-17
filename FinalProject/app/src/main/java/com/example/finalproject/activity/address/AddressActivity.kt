@@ -74,9 +74,9 @@ class AddressActivity : AppCompatActivity() {
             for (address in favAddress) {
                 val addressName = address["Address"] as String
                 val description = address["Description"] as String
-                val latLon = address["coordinates"] as HashMap<String, Float>
-                val lat = latLon["lat"] as Float
-                val lon = latLon["lon"] as Float
+                val latLon = address["coordinates"] as HashMap<String, Double>
+                val lat = latLon["lat"] as Double
+                val lon = latLon["lon"] as Double
             }
         }
 
