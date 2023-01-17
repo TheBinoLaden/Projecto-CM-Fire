@@ -11,7 +11,7 @@ class AddressDao {
                     FieldValue.arrayUnion(hashMapOf(
                             "Address" to address,
                             "Description" to description,
-                            "coordinates" to hashMapOf("lat" to lat, "lon" to lon)
+                            "coordinates" to hashMapOf("lat" to lat.toDouble(), "lon" to lon.toDouble())
                     )))
         }
 

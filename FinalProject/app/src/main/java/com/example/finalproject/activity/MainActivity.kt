@@ -45,6 +45,7 @@ import com.example.finalproject.activity.occurrence.OccurrenceActivity
 import com.example.finalproject.activity.usercontrol.SettingsActivity
 import com.example.finalproject.enums.Tags
 import com.example.finalproject.firebase.dao.OccurrencesDao
+import com.example.finalproject.utils.AddressUtils
 import com.example.finalproject.utils.StringUtils
 import com.example.finalproject.weather.APIData
 import com.example.finalproject.weather.Formulas
@@ -66,6 +67,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -85,7 +87,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     //Variaveis para a localização do utilizador
     private var lastLocation: Location? = null
-    var testePosicao = LatLng(0.0, 0.0)
+
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var locationGranted = false
     lateinit var locationRequest: LocationRequest
@@ -104,6 +106,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     // Stores Occurrences when the user moves but the Database remains the same
     private var storeOccurrences: ArrayList<String>? = null
     private var listOccurrencesNotification: ArrayList<String>? = null
+
 
     // FCUL is the defaultLocation
     private val defaultLocation = LatLng(38.75648904803744, -9.155400218408356)
@@ -125,7 +128,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val navView: NavigationView = findViewById(R.id.nav_view)
         val header: View = navView.getHeaderView(0)
         val name = header.findViewById<TextView>(R.id.textView7)
-        name.text = intent.extras?.getString("username") ?: ""
+        val userName = intent.extras?.getString("username") ?: ""
+        name.text = userName
+
+
 
         toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(toggle)
@@ -161,6 +167,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         addListenerOfDatabase()
+        getUserAddress(userName)
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////               MAP RELATED LOGIC                     //////////////////
@@ -374,7 +381,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         googleMap.clear()
                         placeMarkerLocation(currentLatLong)
                         setMarkers()
-                        createNotification()
+                        createNotification(currentLatLong,)
                     }
                 }
             }
@@ -387,7 +394,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         )
     }
 
-    private fun createNotification(){
+    private fun createNotification(actualLocation: LatLng){
         for (i in storeOccurrences!!.indices){
             val str = ";"
             val parts = storeOccurrences!![i].split(str)
@@ -398,13 +405,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
             for(r in listOccurrencesNotification!!.indices){
                 if(listOccurrencesNotification!![r] == coord){
-
                     alredyExist = 1
                 }
             }
 
             if (alredyExist == 0){
-                testNotification(storeOccurrences!![i])
+                testNotification(storeOccurrences!![i],actualLocation)
             }
         }
     }
@@ -503,19 +509,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
-    private fun testNotification(ocurencia:String){
+    private fun testNotification(ocurencia:String,actualLocation: LatLng,){
         val str = ";"
         val parts = ocurencia.split(str)
 
-        val lat = StringUtils.getLatDB(parts[1])
-        val lon = StringUtils.getLonDB(parts[1])
-        val coord = lat+ ";" + lon
+        val lat = StringUtils.getLatDB(parts[1]).toDouble()
+        val lon = StringUtils.getLonDB(parts[1]).toDouble()
+        val coord = LatLng(lat,lon)
 
         if(parts[4] == "Incendio"){
-            checkFire(parts[1])
+            checkFire(parts[1],actualLocation)
         }else if(parts[4] == "Manutencao"){
-            checkWork("Teste", "Notificação teste com passagem de parametros", R.drawable.fireicon)
+            val info = "Manutenção de Terreno" + ";" + "Existe um terreno perto de si que necessita de manutenção"
+            checkWork(parts[1],actualLocation,info)
         }
+
     }
 
 private fun placeMarkerLocation(currentLatLong: LatLng) {
@@ -581,13 +589,13 @@ private fun showDialogNormal() {
 }
 
 //Código para calcular distancia
-private fun calculateDistance(pointLocation: LatLng):Int {
+private fun calculateDistance(pointLocation: LatLng,actualLocation: LatLng):Int {
     var final = 0.0f
     if(lastLocation != null){
         val results = FloatArray(3)
         Location.distanceBetween(
-            lastLocation!!.latitude,
-            lastLocation!!.longitude,
+            actualLocation!!.latitude,
+            actualLocation!!.longitude,
             pointLocation.latitude,
             pointLocation.longitude,
             results
@@ -601,13 +609,13 @@ private fun calculateDistance(pointLocation: LatLng):Int {
 
 }
 
-private fun checkFire(coordenates:String) {
+private fun checkFire(coordenates:String,actualLocation: LatLng) {
 
     val lat = StringUtils.getLatDB(coordenates)
     val long = StringUtils.getLonDB(coordenates)
 
     val coord = LatLng(lat.toDouble(),long.toDouble())
-    val distance = calculateDistance(coord)
+    val distance = calculateDistance(coord,actualLocation)
 
     if(distance <= 5){
         Thread.sleep(3000)
@@ -617,13 +625,23 @@ private fun checkFire(coordenates:String) {
 
 }
 
-private fun checkWork(title: String, information: String, icon: Int) {
-    createNotificationChannel()
-    createNotification(title, information, icon)
-}
+    private fun checkWork(coordenates: String,actualLocation: LatLng, information: String){
+        val lat = StringUtils.getLatDB(coordenates)
+        val long = StringUtils.getLonDB(coordenates)
+
+        val coord = LatLng(lat.toDouble(),long.toDouble())
+        val distance = calculateDistance(coord,actualLocation)
+
+        if(distance <= 5){
+            //Thread.sleep(3000)
+            createNotificationChannel()
+            createNotification(information)
+            listOccurrencesNotification!!.add(lat.toString() + ";" + long.toString())
+        }
+    }
 
 @SuppressLint("UnspecifiedImmutableFlag")
-private fun createNotification(title: String, information: String, icon: Int) {
+private fun createNotification(information: String) {
     val intent = Intent(this, MainActivity::class.java)
     var pendingIntent: PendingIntent? = null
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -632,10 +650,13 @@ private fun createNotification(title: String, information: String, icon: Int) {
         pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
     }
 
+    val str = ";"
+    val parts = information.split(str)
+
     val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-        .setContentTitle(title)
-        .setContentText(information)
-        .setSmallIcon(icon)
+        .setContentTitle(parts[0])
+        .setContentText(parts[1])
+        .setSmallIcon(R.drawable.fireicon)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setContentIntent(pendingIntent)
         .build()
@@ -741,6 +762,45 @@ private fun setMarkers() {
         googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
     }
 }
+
+    private fun getUserAddress(user: String){
+        AddressUtils.getFavAddress(user){ favAddress ->
+            for( address in favAddress){
+                val addressName = address["Address"] as String
+                val description = address["Description"] as String
+                val latLon = address["coordinates"] as HashMap<String, Double>
+                val lat = latLon["lat"] as Double
+                val lon = latLon["lon"] as Double
+                val coord = LatLng(lat.toDouble(),lon.toDouble())
+
+                notificationAddress(addressName,coord)
+                Log.d("tag",addressName + " - " + lat.toString() + ";" + lon.toString())
+            }
+        }
+    }
+
+    private fun notificationAddress(morada:String,coordAddress: LatLng){
+        for (i in storeOccurrences!!.indices){
+            val str = ";"
+            val parts = storeOccurrences!![i].split(str)
+            val lat = StringUtils.getLatDB(parts[1])
+            val lon = StringUtils.getLonDB(parts[1])
+            val coord = lat+ ";" + lon
+            var alredyExist = 0
+
+            for(r in listOccurrencesNotification!!.indices){
+                if(listOccurrencesNotification!![r] == coord){
+                    alredyExist = 1
+                }
+            }
+
+            if (alredyExist == 0){
+                val info = "Incendio" + ";" + "Existe um incendio perto da sua morada " + morada
+                checkWork(parts[1],coordAddress,info)
+            }
+        }
+
+    }
 
 private fun addListenerOfDatabase() {
     val dbConnection = Firebase.firestore
