@@ -303,7 +303,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val geocoder = Geocoder(applicationContext, Locale.getDefault())
             val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
             if (addresses!!.isNotEmpty()) {
-                if (addresses[0] != null) {
+                if (addresses[0] != null && addresses[0].adminArea != null) {
                     val district = District.getDistrict(addresses[0].adminArea)
                     if (district != null) {
                         WeatherUtils.getDistrictWeather(district) { dataSet ->
@@ -364,7 +364,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (currentLatLong != null) {
                         googleMap.clear()
                         setMarkers()
-                        createNotification(currentLatLong)
+                        createNewNotification(currentLatLong)
                     }
                 }
             }
@@ -377,23 +377,42 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         )
     }
 
-    private fun createNotification(actualLocation: LatLng) {
-        for (i in storeOccurrences!!.indices) {
-            val str = ";"
-            val parts = storeOccurrences!![i].split(str)
-            val lat = StringUtils.getLatDB(parts[1])
-            val lon = StringUtils.getLonDB(parts[1])
-            val coord = lat + ";" + lon
-            var alreadyExist = 0
+    private fun createNewNotification(actualLocation:LatLng){
+        OccurrencesUtils.searchOccurrencesList { documents ->
+            for (document in documents) {
+                val latLon = document["coordinates"] as HashMap<String, Double>
+                val lat = latLon["lat"] as Double
+                val lon = latLon["lon"] as Double
+                val type = document["type"] as String
 
-            for (r in listOccurrencesNotification!!.indices) {
-                if (listOccurrencesNotification!![r] == coord) {
-                    alreadyExist = 1
+                val coord = lat.toString() + ";" + lon.toString()
+                val positionOccurrence = LatLng(lat,lon)
+
+                var alredyExist = 0
+                val distance = calculateDistance(positionOccurrence,actualLocation)
+
+                for(r in listOccurrencesNotification!!.indices){
+                    if(listOccurrencesNotification!![r] == coord){
+                        alredyExist = 1
+                    }
                 }
-            }
+                if (alredyExist == 0){
+                    if(type == "Incendio"){
+                        if(distance <= 5){
+                            Thread.sleep(3000)
+                            showDialogNormal()
+                            listOccurrencesNotification!!.add(lat.toString() + ";" + lon.toString())
+                     }
+                    }else if(type== "Manutencao"){
+                        val info = "Manutenção de Terreno" + ";" + "Existe um terreno perto de si que necessita de manutenção"
 
-            if (alreadyExist == 0) {
-                testNotification(storeOccurrences!![i], actualLocation)
+                        if(distance <= 5){
+                            createNotificationChannel()
+                            createNotification(info)
+                            listOccurrencesNotification!!.add(lat.toString() + ";" + lon.toString())
+                        }
+                    }
+                }
             }
         }
     }
@@ -492,23 +511,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
-    private fun testNotification(ocurencia: String, actualLocation: LatLng) {
-        val str = ";"
-        val parts = ocurencia.split(str)
-
-        val lat = StringUtils.getLatDB(parts[1]).toDouble()
-        val lon = StringUtils.getLonDB(parts[1]).toDouble()
-        val coord = LatLng(lat, lon)
-
-        if (parts[4] == "Incendio") {
-            checkFire(parts[1], actualLocation)
-        } else if (parts[4] == "Manutencao") {
-            val info = "Manutenção de Terreno" + ";" + "Existe um terreno perto de si que necessita de manutenção"
-            checkWork(parts[1], actualLocation, info)
-        }
-
-    }
-
     //Função permite obter o morada através de coordenadas
     private fun getAddressName(lat: Double, lon: Double): String {
         val geoCoder = Geocoder(this, Locale.getDefault())
@@ -581,22 +583,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         return final.toInt()
         //Log.d("tag",String.format("%.1f",results[0]/1000) + "km")
-
-    }
-
-    private fun checkFire(coordenates: String, actualLocation: LatLng) {
-
-        val lat = StringUtils.getLatDB(coordenates)
-        val long = StringUtils.getLonDB(coordenates)
-
-        val coord = LatLng(lat.toDouble(), long.toDouble())
-        val distance = calculateDistance(coord, actualLocation)
-
-        if (distance <= 5) {
-            Thread.sleep(3000)
-            showDialogNormal()
-            listOccurrencesNotification!!.add(lat.toString() + ";" + long.toString())
-        }
 
     }
 
