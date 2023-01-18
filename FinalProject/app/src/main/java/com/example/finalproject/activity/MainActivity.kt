@@ -3,6 +3,7 @@ package com.example.finalproject.activity
 import android.Manifest
 import android.animation.LayoutTransition
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -56,6 +57,11 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.AutocompleteActivity
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
@@ -208,10 +214,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
 
-        //Abre a aba do search
-        val search: MenuItem? = menu?.findItem(R.id.search)
-        val searchView = search?.actionView as SearchView
-        searchView.queryHint = "Search"
+
+//        val searchView = search?.actionView as SearchView
+//        searchView.queryHint = "Search Address"
 
         return true
     }
@@ -226,8 +231,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         if (item.itemId == R.id.filter) {
             val bottomSheetDialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
             val bottomSheetView = LayoutInflater.from(applicationContext).inflate(
-                    R.layout.bottom_filters,
-                    findViewById<LinearLayout>(R.id.bottomFiltersContainer)
+                R.layout.bottom_filters,
+                findViewById<LinearLayout>(R.id.bottomFiltersContainer)
             )
 
             bottomSheetDialog.setContentView(bottomSheetView)
@@ -247,7 +252,44 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
+        if (item.itemId == R.id.search) {
+            if (!Places.isInitialized()) {
+                Places.initialize(applicationContext, getString(R.string.api_key2), Locale.getDefault())
+            }
+
+            val AUTOCOMPLETE_REQUEST_CODE = 1
+
+            // Set the fields to specify which types of place data to
+            // return after the user has made a selection.
+            val fields = listOf(Place.Field.LAT_LNG)
+            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields).setCountry("PT").build(this)
+            startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
+        }
+
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == 1) {
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+                    data?.let {
+                        val place = Autocomplete.getPlaceFromIntent(data)
+                        if (place.latLng != null)
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.latLng!!, 13f));
+                    }
+                }
+                AutocompleteActivity.RESULT_ERROR -> {
+                    data?.let {
+                        val status = Autocomplete.getStatusFromIntent(data)
+                        Log.i("TESTE", status.statusMessage ?: "")
+                    }
+                }
+                Activity.RESULT_CANCELED -> {
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
 
@@ -278,7 +320,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                             listOccurrencesNotification!!.add(lat.toString() + ";" + lon.toString())
                         }
                     } else if (type == "Manutencao") {
-                        val info = "Manutenção de Terreno" + ";" + "Existe um terreno perto de si que necessita de manutenção"
+                        val info =
+                            "Manutenção de Terreno" + ";" + "Existe um terreno perto de si que necessita de manutenção"
 
                         if (distance <= 5) {
                             createNotificationChannel()
@@ -314,19 +357,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
 
                     googleMap.addMarker(
-                            MarkerOptions()
-                                    .position(coordenates)
-                                    .icon(smallMarkerIcon)
-                                    .title("Definição")
-                                    .snippet(morada)
+                        MarkerOptions()
+                            .position(coordenates)
+                            .icon(smallMarkerIcon)
+                            .title("Definição")
+                            .snippet(morada)
                     )
 
                     storeMarker(
-                            MarkerOptions()
-                                    .position(coordenates)
-                                    .icon(smallMarkerIcon)
-                                    .title("Definição")
-                                    .snippet(morada)
+                        MarkerOptions()
+                            .position(coordenates)
+                            .icon(smallMarkerIcon)
+                            .title("Definição")
+                            .snippet(morada)
                     )
                 } else {
                     if (type == filtro) {
@@ -337,19 +380,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                             smallMarkerIcon = iconMap(1)
                         }
                         googleMap.addMarker(
-                                MarkerOptions()
-                                        .position(coordenates)
-                                        .icon(smallMarkerIcon)
-                                        .title("Definição")
-                                        .snippet(morada)
+                            MarkerOptions()
+                                .position(coordenates)
+                                .icon(smallMarkerIcon)
+                                .title("Definição")
+                                .snippet(morada)
                         )
 
                         storeMarker(
-                                MarkerOptions()
-                                        .position(coordenates)
-                                        .icon(smallMarkerIcon)
-                                        .title("Definição")
-                                        .snippet(morada)
+                            MarkerOptions()
+                                .position(coordenates)
+                                .icon(smallMarkerIcon)
+                                .title("Definição")
+                                .snippet(morada)
                         )
                     }
                 }
@@ -386,7 +429,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         timerAlert.start()
     }
 
-    private fun checkWork(lat: String, long : String, actualLocation: LatLng, information: String) {
+    private fun checkWork(lat: String, long: String, actualLocation: LatLng, information: String) {
 
         val coord = LatLng(lat.toDouble(), long.toDouble())
         val distance = calculateDistance(coord, actualLocation)
@@ -412,12 +455,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val parts = information.split(str)
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle(parts[0])
-                .setContentText(parts[1])
-                .setSmallIcon(R.drawable.fireicon)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent)
-                .build()
+            .setContentTitle(parts[0])
+            .setContentText(parts[1])
+            .setSmallIcon(R.drawable.fireicon)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .build()
 
         val notificationManager = NotificationManagerCompat.from(this)
 
@@ -427,9 +470,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                    CHANNEL_ID,
-                    CHANNEL_NAME,
-                    NotificationManager.IMPORTANCE_DEFAULT
+                CHANNEL_ID,
+                CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
                 lightColor = Color.GREEN
                 enableLights(true)
@@ -450,8 +493,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 googleMap.isMyLocationEnabled = true
                 googleMap.uiSettings.isMyLocationButtonEnabled = true
             } else {
-                googleMap.isMyLocationEnabled = false
-                googleMap.uiSettings.isMyLocationButtonEnabled = false
                 lastLocation = null
                 getLocationPermission()
             }
@@ -462,18 +503,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     // Double check against the permission
     private fun getLocationPermission() {
-        if (ContextCompat.checkSelfPermission(
-                        this.applicationContext,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                )
-                == PackageManager.PERMISSION_GRANTED
-        ) {
+        if (ContextCompat.checkSelfPermission(this.applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationGranted = true
+            googleMap.isMyLocationEnabled = true
+            googleMap.uiSettings.isMyLocationButtonEnabled = true
         } else {
-            ActivityCompat.requestPermissions(
-                    this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    34
-            )
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 34)
         }
     }
 
@@ -489,19 +524,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         if (lastLocation != null) {
                             // private val defaultLocation = LatLng(-33.8523341, 151.2106085)
                             googleMap.moveCamera(
-                                    CameraUpdateFactory.newLatLngZoom(
-                                            LatLng(
-                                                    lastLocation!!.latitude,
-                                                    lastLocation!!.longitude
-                                            ), ZOOM.toFloat()
-                                    )
+                                CameraUpdateFactory.newLatLngZoom(
+                                    LatLng(
+                                        lastLocation!!.latitude,
+                                        lastLocation!!.longitude
+                                    ), ZOOM.toFloat()
+                                )
                             )
                         }
                     } else {
                         googleMap.moveCamera(
-                                CameraUpdateFactory.newLatLngZoom(defaultLocation, ZOOM.toFloat())
+                            CameraUpdateFactory.newLatLngZoom(defaultLocation, ZOOM.toFloat())
                         )
-                        googleMap.uiSettings.isMyLocationButtonEnabled = false
                     }
                 }
             }
@@ -563,8 +597,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
             if (alreadyExist == 0) {
                 val info = "Incendio" + ";" + "Existe um incendio perto da sua morada " + morada
-                checkWork(parts.occurrenceAddress.latitude, parts.occurrenceAddress.longitude,
-                        coordAddress, info)
+                checkWork(
+                    parts.occurrenceAddress.latitude, parts.occurrenceAddress.longitude,
+                    coordAddress, info
+                )
             }
         }
 
@@ -576,11 +612,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         if (lastLocation != null) {
             val results = FloatArray(3)
             Location.distanceBetween(
-                    actualLocation!!.latitude,
-                    actualLocation!!.longitude,
-                    pointLocation.latitude,
-                    pointLocation.longitude,
-                    results
+                actualLocation!!.latitude,
+                actualLocation!!.longitude,
+                pointLocation.latitude,
+                pointLocation.longitude,
+                results
             )
 
             final = results[0] / 1000
@@ -594,7 +630,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         //Localização do utilizador
-        googleMap.uiSettings.isZoomControlsEnabled = true
+        googleMap.uiSettings.isCompassEnabled = true
+        googleMap.uiSettings.isMyLocationButtonEnabled = true
         // Updates the UI location settings
         updateLocationUI()
         // Gets the first location of the device
@@ -619,19 +656,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
 
                 googleMap.addMarker(
-                        MarkerOptions()
-                                .position(coordinates)
-                                .icon(smallMarkerIcon)
-                                .title("Definição")
-                                .snippet(morada)
+                    MarkerOptions()
+                        .position(coordinates)
+                        .icon(smallMarkerIcon)
+                        .title("Definição")
+                        .snippet(morada)
                 )
 
                 storeMarker(
-                        MarkerOptions()
-                                .position(coordinates)
-                                .icon(smallMarkerIcon)
-                                .title("Definição")
-                                .snippet(morada)
+                    MarkerOptions()
+                        .position(coordinates)
+                        .icon(smallMarkerIcon)
+                        .title("Definição")
+                        .snippet(morada)
                 )
 
                 googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
@@ -650,14 +687,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     val district = District.getDistrict(addresses[0].adminArea)
                     if (district != null) {
                         WeatherUtils.getDistrictWeather(district) { dataSet ->
-                            WeatherUtils.checkIfShouldUpdate(district, latLng.latitude, latLng.longitude,
-                                    dataSet["lastUpdate"] as Long
+                            WeatherUtils.checkIfShouldUpdate(
+                                district, latLng.latitude, latLng.longitude,
+                                dataSet["lastUpdate"] as Long
                             )
                             val newRisk = "Fire Risk: " + dataSet["fireRisk"] as String
-                            val newDetails = "Temperature: " + DecimalFormat("#.##").format(dataSet["temp"] as Double) + "C" +
-                                    "\nHumidity: " + DecimalFormat("#.##").format(dataSet["humidity"] as Double) + "%" +
-                                    "\nWind Speed: " + DecimalFormat("#.##").format(dataSet["windSpeed"] as Double) + "m/s" +
-                                    "\nWind Rotation: " + dataSet["windDeg"] as Long
+                            val newDetails =
+                                "Temperature: " + DecimalFormat("#.##").format(dataSet["temp"] as Double) + "C" +
+                                        "\nHumidity: " + DecimalFormat("#.##").format(dataSet["humidity"] as Double) + "%" +
+                                        "\nWind Speed: " + DecimalFormat("#.##").format(dataSet["windSpeed"] as Double) + "m/s" +
+                                        "\nWind Rotation: " + dataSet["windDeg"] as Long
                             fireRiskText.text = newRisk
                             fireRiskDetails.text = newDetails
                         }
@@ -670,14 +709,30 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun iconMap(type: Int): BitmapDescriptor? {
         var bitmap: Bitmap? = null
         if (type == 0) {
-            val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.map_marker_fire, null)
+            val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(
+                R.layout.map_marker_fire,
+                null
+            )
             val cardView = marker.findViewById<CardView>(R.id.markerFireIcon)
-            bitmap = Bitmap.createScaledBitmap(viewToBitmap(cardView)!!, cardView.width, cardView.height, false)
+            bitmap = Bitmap.createScaledBitmap(
+                viewToBitmap(cardView)!!,
+                cardView.width,
+                cardView.height,
+                false
+            )
 
         } else if (type == 1) {
-            val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.map_marker_work, null)
+            val marker = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(
+                R.layout.map_marker_work,
+                null
+            )
             val cardView = marker.findViewById<CardView>(R.id.markerWorkIcon)
-            bitmap = Bitmap.createScaledBitmap(viewToBitmap(cardView)!!, cardView.width, cardView.height, false)
+            bitmap = Bitmap.createScaledBitmap(
+                viewToBitmap(cardView)!!,
+                cardView.width,
+                cardView.height,
+                false
+            )
         }
         val smallMarkerIcon = bitmap?.let { BitmapDescriptorFactory.fromBitmap(it) }
         return smallMarkerIcon
@@ -686,7 +741,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun viewToBitmap(view: View): Bitmap? {
         view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
         val bitmap =
-                Bitmap.createBitmap(view.measuredWidth, view.measuredHeight, Bitmap.Config.ARGB_8888)
+            Bitmap.createBitmap(view.measuredWidth, view.measuredHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         view.layout(0, 0, view.measuredWidth, view.measuredHeight)
         view.draw(canvas)
@@ -696,11 +751,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun setUpMap() {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_REQUEST_CODE)
-            googleMap.isMyLocationEnabled = true
-            googleMap.uiSettings.isMyLocationButtonEnabled = true
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_REQUEST_CODE
+            )
         }
 
         setLocationFetchSettings()
@@ -711,11 +767,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 super.onLocationResult(locationResult)
                 lastLocation = locationResult.lastLocation
                 if (locationResult.locations.size != 0
-                        && (locationResult.locations[locationResult.locations.size - 1] != lastLocation
-                                || locationResult.locations.size == 1)
+                    && (locationResult.locations[locationResult.locations.size - 1] != lastLocation
+                            || locationResult.locations.size == 1)
                 ) {
                     val currentLatLong =
-                            lastLocation?.let { LatLng(it.latitude, lastLocation!!.longitude) }
+                        lastLocation?.let { LatLng(it.latitude, lastLocation!!.longitude) }
 
                     if (currentLatLong != null) {
                         googleMap.clear()
@@ -727,9 +783,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         fusedLocationClient.requestLocationUpdates(
-                locationRequest,
-                locationCallback,
-                Looper.getMainLooper()
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
         )
     }
 
