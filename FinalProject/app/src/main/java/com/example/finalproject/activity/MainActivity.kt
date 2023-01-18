@@ -316,7 +316,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (alredyExist == 0) {
                     if (type == "Incendio") {
                         if (distance <= 5) {
-                            Thread.sleep(3000)
+                            Thread.sleep(1000)
                             showDialogNormal()
                             listOccurrencesNotification!!.add(lat.toString() + ";" + lon.toString())
                         }
