@@ -312,6 +312,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         alredyExist = 1
                     }
                 }
+                Log.d("tag","distance: " + distance.toString())
                 if (alredyExist == 0) {
                     if (type == "Incendio") {
                         if (distance <= 5) {
@@ -609,18 +610,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     //Código para calcular distancia
     private fun calculateDistance(pointLocation: LatLng, actualLocation: LatLng): Int {
         var final = 0.0f
-        if (lastLocation != null) {
-            val results = FloatArray(3)
-            Location.distanceBetween(
-                actualLocation!!.latitude,
-                actualLocation!!.longitude,
-                pointLocation.latitude,
-                pointLocation.longitude,
-                results
-            )
+        val results = FloatArray(3)
+        Location.distanceBetween(
+            actualLocation.latitude,
+            actualLocation.longitude,
+            pointLocation.latitude,
+            pointLocation.longitude,
+            results)
 
-            final = results[0] / 1000
-        }
+        final = results[0] / 1000
 
         return final.toInt()
         //Log.d("tag",String.format("%.1f",results[0]/1000) + "km")
@@ -813,6 +811,4 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
     }
-
-
 }
