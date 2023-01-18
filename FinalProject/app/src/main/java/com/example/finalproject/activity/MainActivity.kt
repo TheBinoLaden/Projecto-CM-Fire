@@ -346,10 +346,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 val lon = latLon["lon"] as Double
                 val titleOc = document["title"] as String
                 val type = document["type"] as String
+                val des = document["description"] as String
                 var smallMarkerIcon: BitmapDescriptor? = null
 
                 val coordenates = LatLng(lat, lon)
                 val morada = AddressUtils.getAddressFromLocation(this, coordenates)
+
+                val info = "Morada: " + morada + "\nDescrição: "+ des
 
                 if (filtro == "Tudo") {
                     if (type == "Incendio") {
@@ -363,7 +366,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                             .position(coordenates)
                             .icon(smallMarkerIcon)
                             .title(titleOc)
-                            .snippet(morada)
+                            .snippet(info)
                     )
 
                     storeMarker(
@@ -371,7 +374,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                             .position(coordenates)
                             .icon(smallMarkerIcon)
                             .title(titleOc)
-                            .snippet(morada)
+                            .snippet(info)
                     )
                 } else {
                     if (type == filtro) {
@@ -386,7 +389,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                 .position(coordenates)
                                 .icon(smallMarkerIcon)
                                 .title(titleOc)
-                                .snippet(morada)
+                                .snippet(info)
                         )
 
                         storeMarker(
@@ -394,7 +397,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                 .position(coordenates)
                                 .icon(smallMarkerIcon)
                                 .title(titleOc)
-                                .snippet(morada)
+                                .snippet(info)
                         )
                     }
                 }
@@ -644,10 +647,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 val lon = latLon["lon"] as Double
                 val type = document["type"] as String
                 val titleOc = document["title"] as String
+                val des = document["description"] as String
                 var smallMarkerIcon: BitmapDescriptor? = null
 
                 val coordinates = LatLng(lat, lon)
                 val morada = AddressUtils.getAddressFromLocation(this, coordinates)
+                val info = "Morada: " + morada + "\nDescrição: "+ des
 
                 if (type == "Incendio") {
                     smallMarkerIcon = iconMap(0)
@@ -660,7 +665,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         .position(coordinates)
                         .icon(smallMarkerIcon)
                         .title(titleOc)
-                        .snippet(morada)
+                        .snippet(info)
                 )
 
                 storeMarker(
@@ -668,7 +673,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         .position(coordinates)
                         .icon(smallMarkerIcon)
                         .title(titleOc)
-                        .snippet(morada)
+                        .snippet(info)
                 )
 
                 googleMap.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
