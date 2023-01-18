@@ -344,6 +344,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 val latLon = document["coordinates"] as HashMap<String, Double>
                 val lat = latLon["lat"] as Double
                 val lon = latLon["lon"] as Double
+                val titleOc = document["title"] as String
                 val type = document["type"] as String
                 var smallMarkerIcon: BitmapDescriptor? = null
 
@@ -361,7 +362,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         MarkerOptions()
                             .position(coordenates)
                             .icon(smallMarkerIcon)
-                            .title("Definição")
+                            .title(titleOc)
                             .snippet(morada)
                     )
 
@@ -369,7 +370,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         MarkerOptions()
                             .position(coordenates)
                             .icon(smallMarkerIcon)
-                            .title("Definição")
+                            .title(titleOc)
                             .snippet(morada)
                     )
                 } else {
@@ -384,7 +385,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                             MarkerOptions()
                                 .position(coordenates)
                                 .icon(smallMarkerIcon)
-                                .title("Definição")
+                                .title(titleOc)
                                 .snippet(morada)
                         )
 
@@ -392,7 +393,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                             MarkerOptions()
                                 .position(coordenates)
                                 .icon(smallMarkerIcon)
-                                .title("Definição")
+                                .title(titleOc)
                                 .snippet(morada)
                         )
                     }
@@ -642,6 +643,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 val lat = latLon["lat"] as Double
                 val lon = latLon["lon"] as Double
                 val type = document["type"] as String
+                val titleOc = document["title"] as String
                 var smallMarkerIcon: BitmapDescriptor? = null
 
                 val coordinates = LatLng(lat, lon)
@@ -657,7 +659,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     MarkerOptions()
                         .position(coordinates)
                         .icon(smallMarkerIcon)
-                        .title("Definição")
+                        .title(titleOc)
                         .snippet(morada)
                 )
 
@@ -665,7 +667,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     MarkerOptions()
                         .position(coordinates)
                         .icon(smallMarkerIcon)
-                        .title("Definição")
+                        .title(titleOc)
                         .snippet(morada)
                 )
 
@@ -804,7 +806,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 for (document in it) {
                     val convertedString = StringUtils.makeStringFromDatabase(document)
                     val convertedOccurrence = OccurrencesUtils.makeOccurrenceFromDatabase(document)
-                    Toast.makeText(this, "New Update of Occurrences.", Toast.LENGTH_LONG).show()
                     Log.d("tag", convertedString)
                     storeOccurrences?.add(convertedOccurrence)
                 }
